@@ -1,46 +1,48 @@
 package main
 
-import "os"
-import "fmt"
-import "log"
 import "sort"
+import "errors"
+import "fmt"
 
-const NUM_TOP = 512
-
-func main() {
-  var token string = os.Getenv("GITHUB_TOKEN")
+func GithubTop(options TopOptions) (GithubDataPieces, error) {
+  var token string = options.token
   if token == "" {
-    log.Fatal("Missing GITHUB token")
+    return GithubDataPieces{}, errors.New("Missing GITHUB token")
+  }
+
+  var num_top = options.amount
+  if num_top == 0 {
+    num_top = 256
   }
 
   var client = NewGithubClient(DiskCache, TokenAuth(token))
-/*  user, err := client.CurrentUser()
-  if err != nil {
-    log.Fatal(err)
+
+  query := "repos:>1+type:user"
+  for _, location := range locations {
+    query = fmt.Sprintf("%s+location:%s", query, location)
   }
 
-  fmt.Printf("%+v\n", user)*/
 
-  users, err := client.SearchUsers(UserSearchQuery{q: "location:finland+location:suomi+repos:>1+type:user", sort: "followers", order: "desc", per_page: 100, pages: 10})
+  users, err := client.SearchUsers(UserSearchQuery{q: query, sort: "followers", order: "desc", per_page: 100, pages: 10})
   if err != nil {
-    log.Fatal(err)
+    return GithubDataPieces{}, err
   }
 
   data := GithubDataPieces{}
   for _, username := range users {
     u, err := client.User(username)
     if err != nil {
-      log.Fatal(err)
+      return GithubDataPieces{}, err
     }
 
     i, err := client.NumContributions(username)
     if err != nil {
-      log.Fatal(err)
+      return GithubDataPieces{}, err
     }
 
     orgs, err := client.Organizations(username)
     if err != nil {
-      log.Fatal(err)
+      return GithubDataPieces{}, err
     }
 
     data = append(data, GithubDataPiece{ User: u, Contributions: i, Organizations: orgs })
@@ -48,9 +50,7 @@ func main() {
 
   sort.Sort(data)
 
-  for i, user := range data[:NUM_TOP] {
-    fmt.Printf("#%+v: %+v (%+v):%+v\n", i + 1, user.User.Name, user.User.Login, user.Contributions)
-  }
+  return data[:num_top], nil
 }
 
 type GithubDataPiece struct {
@@ -71,4 +71,10 @@ func (slice GithubDataPieces) Less(i, j int) bool {
 
 func (slice GithubDataPieces) Swap(i, j int) {
     slice[i], slice[j] = slice[j], slice[i]
+}
+
+type TopOptions struct {
+  token     string
+  locations []string
+  amount    int
 }
