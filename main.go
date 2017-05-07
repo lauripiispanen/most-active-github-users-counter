@@ -70,11 +70,11 @@ func PlainOutput(data GithubDataPieces, writer io.Writer) {
 
 func CsvOutput(data GithubDataPieces, writer io.Writer) {
   w := csv.NewWriter(writer)
-  if err := w.Write([]string{"name", "login", "contributions"}); err != nil {
+  if err := w.Write([]string{"rank", "name", "login", "contributions"}); err != nil {
     log.Fatal(err)
   }
-  for _, user := range data {
-    if err := w.Write([]string{ user.User.Name, user.User.Login, strconv.Itoa(user.Contributions) }); err != nil {
+  for i, user := range data {
+    if err := w.Write([]string{ strconv.Itoa(i + 1), user.User.Name, user.User.Login, strconv.Itoa(user.Contributions) }); err != nil {
       log.Fatal(err)
     }
   }
