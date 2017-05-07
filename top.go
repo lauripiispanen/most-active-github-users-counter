@@ -1,8 +1,12 @@
 package main
 
-import "sort"
-import "errors"
-import "fmt"
+import (
+  "sort"
+  "errors"
+  "fmt"
+  "sync"
+  "log"
+)
 
 func GithubTop(options TopOptions) (GithubDataPieces, error) {
   var token string = options.token
@@ -29,24 +33,40 @@ func GithubTop(options TopOptions) (GithubDataPieces, error) {
   }
 
   data := GithubDataPieces{}
+  pieces := make(chan GithubDataPiece)
+
+  var wg sync.WaitGroup
+  wg.Add(len(users))
+
   for _, username := range users {
-    u, err := client.User(username)
-    if err != nil {
-      return GithubDataPieces{}, err
-    }
+    go func(username string) {
+      defer wg.Done()
+      u, err := client.User(username)
+      if err != nil {
+        log.Fatal(err)
+      }
 
-    i, err := client.NumContributions(username)
-    if err != nil {
-      return GithubDataPieces{}, err
-    }
+      i, err := client.NumContributions(username)
+      if err != nil {
+        log.Fatal(err)
+      }
 
-    orgs, err := client.Organizations(username)
-    if err != nil {
-      return GithubDataPieces{}, err
-    }
+      orgs, err := client.Organizations(username)
+      if err != nil {
+        log.Fatal(err)
+      }
 
-    data = append(data, GithubDataPiece{ User: u, Contributions: i, Organizations: orgs })
+      pieces <- GithubDataPiece{ User: u, Contributions: i, Organizations: orgs }
+    }(username)
   }
+
+  go func() {
+      for piece := range pieces {
+          data = append(data, piece)
+      }
+  }()
+
+  wg.Wait()
 
   sort.Sort(data)
 
