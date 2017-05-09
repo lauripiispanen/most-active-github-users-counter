@@ -40,6 +40,8 @@ func main() {
 
   if *output == "plain" {
     format = PlainOutput
+  } else if *output == "yaml" {
+    format = YamlOutput
   } else if *output == "csv" {
     format = CsvOutput
   }

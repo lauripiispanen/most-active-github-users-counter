@@ -163,6 +163,7 @@ type User struct {
   Id           int
   Name         string
   Location     string
+  Company      string
   Followers    int
   PublicRepos  int `json:"public_repos"`
 }
