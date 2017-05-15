@@ -6,6 +6,7 @@ import (
   "strconv"
   "encoding/csv"
   "strings"
+  "time"
 )
 
 type OutputFormat func(data GithubDataPieces, writer io.Writer) error
@@ -78,6 +79,8 @@ func YamlOutput(data GithubDataPieces, writer io.Writer) error {
       strings.Replace(org.Name, "'", "''", -1),
       org.MemberCount)
   }
+
+  fmt.Fprintf(writer, "generated: %+v\n", time.Now())
 
   return nil
 }
