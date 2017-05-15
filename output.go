@@ -49,20 +49,20 @@ func YamlOutput(data GithubDataPieces, writer io.Writer) error {
       writer,
       `
   - rank: %+v
-    name: %+v
-    login: %+v
+    name: '%+v'
+    login: '%+v'
     id: %+v
     contributions: %+v
-    company: %+v
-    organizations: %+v
+    company: '%+v'
+    organizations: '%+v'
 `,
       i + 1,
-      piece.User.Name,
-      piece.User.Login,
+      strings.Replace(piece.User.Name, "'", "''", -1),
+      strings.Replace(piece.User.Login, "'", "''", -1),
       piece.User.Id,
       piece.Contributions,
-      piece.User.Company,
-      strings.Join(piece.Organizations, ","))
+      strings.Replace(piece.User.Company, "'", "''", -1),
+      strings.Replace(strings.Join(piece.Organizations, ","), "'", "''", -1))
   }
   fmt.Fprintln(writer, "\norganizations:")
 
@@ -71,11 +71,11 @@ func YamlOutput(data GithubDataPieces, writer io.Writer) error {
       writer,
       `
   - rank: %+v
-    name: %+v
+    name: '%+v'
     membercount: %+v
 `,
       i + 1,
-      org.Name,
+      strings.Replace(org.Name, "'", "''", -1),
       org.MemberCount)
   }
 
