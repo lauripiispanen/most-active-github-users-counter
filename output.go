@@ -11,8 +11,13 @@ import (
 type OutputFormat func(data GithubDataPieces, writer io.Writer) error
 
 func PlainOutput(data GithubDataPieces, writer io.Writer) error {
+  fmt.Fprintln(writer, "USERS\n--------")
   for i, piece := range data {
     fmt.Fprintf(writer, "#%+v: %+v (%+v):%+v (%+v) %+v\n", i + 1, piece.User.Name, piece.User.Login, piece.Contributions, piece.User.Company, strings.Join(piece.Organizations, ","))
+  }
+  fmt.Fprintln(writer, "\nORGANIZATIONS\n--------")
+  for i, org := range data.TopOrgs(10) {
+    fmt.Fprintf(writer, "#%+v: %+v (%+v)\n", i + 1, org.Name, org.MemberCount)
   }
   return nil
 }
@@ -50,7 +55,7 @@ func YamlOutput(data GithubDataPieces, writer io.Writer) error {
     contributions: %+v
     company: %+v
     organizations: %+v
-      `,
+`,
       i + 1,
       piece.User.Name,
       piece.User.Login,
@@ -59,5 +64,20 @@ func YamlOutput(data GithubDataPieces, writer io.Writer) error {
       piece.User.Company,
       strings.Join(piece.Organizations, ","))
   }
+  fmt.Fprintln(writer, "\norganizations:")
+
+  for i, org := range data.TopOrgs(10) {
+    fmt.Fprintf(
+      writer,
+      `
+  - rank: %+v
+    name: %+v
+    membercount: %+v
+`,
+      i + 1,
+      org.Name,
+      org.MemberCount)
+  }
+
   return nil
 }
