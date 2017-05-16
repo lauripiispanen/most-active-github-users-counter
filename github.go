@@ -141,6 +141,7 @@ type ContributionsSvgRoot struct {
 func (client HttpGithubClient) NumContributions(login string) (int, error) {
   body, err := client.Request(fmt.Sprintf("https://github.com/users/%s/contributions", login))
   if err != nil {
+    log.Fatalf("error requesting contributions for user %+v", login)
     return -1, err
   }
   graph := ContributionsSvgRoot {}
@@ -163,10 +164,15 @@ func (client HttpGithubClient) Organizations(login string) ([]string, error) {
   url := fmt.Sprintf("https://api.github.com/users/%s/orgs", login)
   body, err := client.Request(url)
   if err != nil {
+    log.Fatalf("error requesting organizations for user %+v", login)
     return []string{}, err
   }
   orgResp := []OrgResponse {}
   err = json.Unmarshal(body, &orgResp)
+  if err != nil {
+    log.Fatalf("error parsing organizations JSON for user %+v", login)
+    return []string{}, err
+  }
   orgs := []string{}
 
   for _, org := range orgResp {
