@@ -23,13 +23,14 @@ var locations arrayFlags
 func main() {
   token := flag.String("token", "", "Github auth token")
   amount := flag.Int("amount", 256, "Amount of users to show")
+  considerNum := flag.Int("consider", 1000, "Amount of users to consider")
   output := flag.String("output", "plain", "Output format: plain, csv")
   fileName := flag.String("file", "", "Output file (optional, defaults to stdout)")
 
   flag.Var(&locations, "location", "Location to query")
   flag.Parse()
 
-  data, err := GithubTop(TopOptions { token: *token, locations: locations, amount: *amount })
+  data, err := GithubTop(TopOptions { token: *token, locations: locations, amount: *amount, considerNum: *considerNum })
 
   if err != nil {
     log.Fatal(err)

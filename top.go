@@ -31,7 +31,7 @@ func GithubTop(options TopOptions) (GithubDataPieces, error) {
   }
 
   var client = NewGithubClient(TokenAuth(token))
-  users, err := client.SearchUsers(UserSearchQuery{q: query, sort: "followers", order: "desc", per_page: 100, pages: 10})
+  users, err := client.SearchUsers(UserSearchQuery{q: query, sort: "followers", order: "desc", per_page: 100, pages: options.considerNum / 100})
   if err != nil {
     return GithubDataPieces{}, err
   }
@@ -109,6 +109,7 @@ type TopOptions struct {
   token     string
   locations []string
   amount    int
+  considerNum int
 }
 
 type TopOrganization struct {
