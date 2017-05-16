@@ -66,6 +66,9 @@ func (client HttpGithubClient) SearchUsers(query UserSearchQuery) ([]string, err
   if query.pages > 0 {
     pages = query.pages
   }
+  if pages > 10 {
+    pages = 10
+  }
 
   logins := []string{}
   currentPage := 1
