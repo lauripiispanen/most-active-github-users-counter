@@ -8,6 +8,7 @@ import (
   "strings"
   "sync"
   "log"
+  "time"
 )
 
 var companyLogin = regexp.MustCompile(`^\@([a-zA-Z0-9]+)$`)
@@ -43,6 +44,8 @@ func GithubTop(options TopOptions) (GithubDataPieces, error) {
 
   var cachingClient = NewGithubClient(DiskCache, TokenAuth(token))
 
+  throttle := time.Tick(time.Second / 10)
+
   for _, username := range users {
     go func(username string) {
       defer wg.Done()
@@ -63,6 +66,8 @@ func GithubTop(options TopOptions) (GithubDataPieces, error) {
 
       pieces <- GithubDataPiece{ User: u, Contributions: i, Organizations: orgs }
     }(username)
+
+    <- throttle
   }
 
   go func() {

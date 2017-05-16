@@ -8,6 +8,7 @@ import (
   "encoding/json"
   "encoding/xml"
   "log"
+  "time"
 )
 
 const root string = "https://api.github.com/"
@@ -71,6 +72,8 @@ func (client HttpGithubClient) SearchUsers(query UserSearchQuery) ([]string, err
   total_count := 0
   max_tries_per_page := 10
 
+  throttle := time.Tick(time.Second * 3)
+
   for currentPage <= pages {
     items := make([]interface{}, 0)
 
@@ -101,7 +104,8 @@ func (client HttpGithubClient) SearchUsers(query UserSearchQuery) ([]string, err
       }
       m := response.(map[string]interface{})
       if m["total_count"] == nil {
-        log.Fatalf("Total count was nil for page %+v", currentPage)
+        fmt.Printf("Total count was nil for page %+v", currentPage)
+        continue CURRENT_PAGE_ATTEMPT
       }
 
       total := int(m["total_count"].(float64))
@@ -114,6 +118,7 @@ func (client HttpGithubClient) SearchUsers(query UserSearchQuery) ([]string, err
           break CURRENT_PAGE_ATTEMPT
         }
       }
+      <- throttle
     }
 
     for _, item := range items {
