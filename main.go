@@ -3,7 +3,6 @@ package main
 import (
   "flag"
   "log"
-  "io"
   "bufio"
   "os"
 )
@@ -46,20 +45,21 @@ func main() {
     format = CsvOutput
   }
 
-  var writer io.Writer
+  var writer *bufio.Writer
   if *fileName != "" {
     f, err := os.Create(*fileName)
     if err != nil {
       log.Fatal(err)
     }
-    defer f.Close()
     writer = bufio.NewWriter(f)
+    defer f.Close()
   } else {
-     writer = os.Stdout
+     writer = bufio.NewWriter(os.Stdout)
   }
 
   err = format(data, writer)
   if err != nil {
     log.Fatal(err)
   }
+  writer.Flush()
 }
