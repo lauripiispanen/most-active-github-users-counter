@@ -1,11 +1,15 @@
 package main
 
-import "strconv"
-import "fmt"
-import "net/http"
-import "net/url"
-import "encoding/json"
-import "encoding/xml"
+import (
+  "strconv"
+  "fmt"
+  "net/http"
+  "net/url"
+  "encoding/json"
+  "encoding/xml"
+  "sync"
+  "log"
+)
 
 const root string = "https://api.github.com/"
 
@@ -69,35 +73,57 @@ func (client HttpGithubClient) SearchUsers(query UserSearchQuery) ([]string, err
 
   logins := []string{}
   currentPage := 0
+
+  logins_chan := make(chan string)
+
+  var wg sync.WaitGroup
+  wg.Add(pages)
+
   for currentPage < pages {
+    go func(page int) {
+      defer wg.Done()
+
+      localValues := url.Values {}
+      for k,v := range v {
+        localValues[k] = v
+      }
+      localValues.Set("page", strconv.Itoa(page))
+      q, err := url.QueryUnescape(localValues.Encode())
+      if err != nil {
+        log.Fatal(err)
+      }
+
+      url := fmt.Sprintf("%ssearch/users?%s", root, q)
+
+      fmt.Printf("%s\n", url)
+
+      body, err := client.Request(url)
+      if err != nil {
+        log.Fatal(err)
+      }
+
+      var response interface {}
+      if err := json.Unmarshal(body, &response); err != nil {
+        log.Fatal(err)
+      }
+      m := response.(map[string]interface{})
+      items := m["items"].([]interface{})
+
+      for _, item := range items {
+        logins_chan <- item.(map[string]interface{})["login"].(string)
+      }
+    }(currentPage + 1)
     currentPage += 1
-
-    v.Set("page", strconv.Itoa(currentPage))
-    q, err := url.QueryUnescape(v.Encode())
-    if err != nil {
-      return []string{}, err
-    }
-
-    url := fmt.Sprintf("%ssearch/users?%s", root, q)
-
-    fmt.Printf("%s\n", url)
-
-    body, err := client.Request(url)
-    if err != nil {
-      return []string{}, err
-    }
-
-    var response interface {}
-    if err := json.Unmarshal(body, &response); err != nil {
-      return []string{}, err
-    }
-    m := response.(map[string]interface{})
-    items := m["items"].([]interface{})
-
-    for _, item := range items {
-      logins = append(logins, item.(map[string]interface{})["login"].(string))
-    }
   }
+
+  go func() {
+      for login := range logins_chan {
+          logins = append(logins, login)
+      }
+  }()
+
+  wg.Wait()
+
 
   return logins, nil
 }
