@@ -71,7 +71,7 @@ func (client HttpGithubClient) SearchUsers(query UserSearchQuery) ([]string, err
   total_count := 0
   max_tries_per_page := 10
 
-  for currentPage < pages {
+  for currentPage <= pages {
     items := make([]interface{}, 0)
 
     CURRENT_PAGE_ATTEMPT:
