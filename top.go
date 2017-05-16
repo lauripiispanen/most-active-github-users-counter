@@ -23,14 +23,13 @@ func GithubTop(options TopOptions) (GithubDataPieces, error) {
     num_top = 256
   }
 
-  var client = NewGithubClient(DiskCache, TokenAuth(token))
 
   query := "repos:>1+type:user"
   for _, location := range locations {
     query = fmt.Sprintf("%s+location:%s", query, location)
   }
 
-
+  var client = NewGithubClient(TokenAuth(token))
   users, err := client.SearchUsers(UserSearchQuery{q: query, sort: "followers", order: "desc", per_page: 100, pages: 10})
   if err != nil {
     return GithubDataPieces{}, err
@@ -42,20 +41,22 @@ func GithubTop(options TopOptions) (GithubDataPieces, error) {
   var wg sync.WaitGroup
   wg.Add(len(users))
 
+  var cachingClient = NewGithubClient(DiskCache, TokenAuth(token))
+
   for _, username := range users {
     go func(username string) {
       defer wg.Done()
-      u, err := client.User(username)
+      u, err := cachingClient.User(username)
       if err != nil {
         log.Fatal(err)
       }
 
-      i, err := client.NumContributions(username)
+      i, err := cachingClient.NumContributions(username)
       if err != nil {
         log.Fatal(err)
       }
 
-      orgs, err := client.Organizations(username)
+      orgs, err := cachingClient.Organizations(username)
       if err != nil {
         log.Fatal(err)
       }

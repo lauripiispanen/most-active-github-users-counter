@@ -7,15 +7,10 @@ import (
   "net/url"
   "encoding/json"
   "encoding/xml"
-  "sync"
   "log"
 )
 
 const root string = "https://api.github.com/"
-
-type GithubClient interface {
-  CurrentUser() (User, error)
-}
 
 type HttpGithubClient struct {
   wrappers []wrapper
@@ -72,22 +67,20 @@ func (client HttpGithubClient) SearchUsers(query UserSearchQuery) ([]string, err
   }
 
   logins := []string{}
-  currentPage := 0
-
-  logins_chan := make(chan string)
-
-  var wg sync.WaitGroup
-  wg.Add(pages)
+  currentPage := 1
+  total_count := 0
+  max_tries_per_page := 10
 
   for currentPage < pages {
-    go func(page int) {
-      defer wg.Done()
+    items := make([]interface{}, 0)
 
+    CURRENT_PAGE_ATTEMPT:
+    for currentTry := 0; currentTry < max_tries_per_page; currentTry++ {
       localValues := url.Values {}
       for k,v := range v {
         localValues[k] = v
       }
-      localValues.Set("page", strconv.Itoa(page))
+      localValues.Set("page", strconv.Itoa(currentPage))
       q, err := url.QueryUnescape(localValues.Encode())
       if err != nil {
         log.Fatal(err)
@@ -107,23 +100,29 @@ func (client HttpGithubClient) SearchUsers(query UserSearchQuery) ([]string, err
         log.Fatal(err)
       }
       m := response.(map[string]interface{})
-      items := m["items"].([]interface{})
-
-      for _, item := range items {
-        logins_chan <- item.(map[string]interface{})["login"].(string)
+      if m["total_count"] == nil {
+        log.Fatalf("Total count was nil for page %+v", currentPage)
       }
-    }(currentPage + 1)
+
+      total := int(m["total_count"].(float64))
+      if (total >= total_count) {
+        total_count = total
+        items = m["items"].([]interface{})
+
+        fmt.Printf("Established total count %+v for page %+v\n", total_count, currentPage)
+        if (currentPage > 1) {
+          break CURRENT_PAGE_ATTEMPT
+        }
+      }
+    }
+
+    for _, item := range items {
+      login := item.(map[string]interface{})["login"].(string)
+      logins = append(logins, login)
+    }
+
     currentPage += 1
   }
-
-  go func() {
-      for login := range logins_chan {
-          logins = append(logins, login)
-      }
-  }()
-
-  wg.Wait()
-
 
   return logins, nil
 }
