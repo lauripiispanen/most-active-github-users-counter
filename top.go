@@ -37,35 +37,65 @@ func GithubTop(options TopOptions) (GithubDataPieces, error) {
   }
 
   data := GithubDataPieces{}
-  pieces := make(chan GithubDataPiece)
+  userContributions := make(UserContributions, 0)
+  userContribChan := make(chan UserContribution)
+
+  cachingClient := NewGithubClient(DiskCache, TokenAuth(token))
+
 
   var wg sync.WaitGroup
   wg.Add(len(users))
-
-  var cachingClient = NewGithubClient(DiskCache, TokenAuth(token))
 
   throttle := time.Tick(time.Second / 10)
 
   for _, username := range users {
     go func(username string) {
       defer wg.Done()
-      u, err := cachingClient.User(username)
+
+      count, err := cachingClient.NumContributions(username)
       if err != nil {
         log.Fatal(err)
       }
 
-      i, err := cachingClient.NumContributions(username)
-      if err != nil {
-        log.Fatal(err)
-      }
-
-      orgs, err := cachingClient.Organizations(username)
-      if err != nil {
-        log.Fatal(err)
-      }
-
-      pieces <- GithubDataPiece{ User: u, Contributions: i, Organizations: orgs }
+      userContribChan <- UserContribution{ Username: username, Contributions: count }
     }(username)
+
+    <- throttle
+  }
+
+  go func() {
+      for userContrib := range userContribChan {
+          userContributions = append(userContributions, userContrib)
+      }
+  }()
+
+  wg.Wait()
+
+  sort.Sort(userContributions)
+
+  userContributions = userContributions[:num_top]
+
+
+  pieces := make(chan GithubDataPiece)
+  wg.Add(len(userContributions))
+
+  throttle = time.Tick(time.Second / 10)
+
+  for _, user := range userContributions {
+    go func(user UserContribution) {
+      defer wg.Done()
+      u, err := cachingClient.User(user.Username)
+      if err != nil {
+        log.Fatal(err)
+      }
+
+      orgs, err := cachingClient.Organizations(user.Username)
+      if err != nil {
+        log.Fatal(err)
+      }
+
+      pieces <- GithubDataPiece{ User: u, Contributions: user.Contributions, Organizations: orgs }
+    }(user)
 
     <- throttle
   }
@@ -83,6 +113,25 @@ func GithubTop(options TopOptions) (GithubDataPieces, error) {
   data = data[:num_top]
 
   return data, nil
+}
+
+type UserContribution struct {
+  Username      string
+  Contributions int
+}
+
+type UserContributions []UserContribution
+
+func (slice UserContributions) Len() int {
+    return len(slice)
+}
+
+func (slice UserContributions) Less(i, j int) bool {
+    return slice[i].Contributions > slice[j].Contributions
+}
+
+func (slice UserContributions) Swap(i, j int) {
+    slice[i], slice[j] = slice[j], slice[i]
 }
 
 type GithubDataPiece struct {
