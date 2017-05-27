@@ -1,11 +1,14 @@
-package main
+package cache
 
-import "strings"
-import "os"
-import "fmt"
-import "log"
-import "io/ioutil"
-import "net/http"
+import (
+    "strings"
+    "os"
+    "fmt"
+    "log"
+    "io/ioutil"
+    "net/http"
+    "github.com/lauripiispanen/github-top/net"
+  )
 
 type producer func() ([]byte, error)
 
@@ -29,7 +32,7 @@ func CacheOnDisk(key string, f producer) ([]byte, error) {
   return contents, nil
 }
 
-func DiskCache(r requester) requester {
+func DiskCache(r net.Requester) net.Requester {
   return func(req *http.Request) ([]byte, error) {
     path := req.URL.EscapedPath()
     key := strings.Replace(fmt.Sprintf("%s+%s", path[1:len(path)], req.URL.Query().Encode()), "/", "-", -1)

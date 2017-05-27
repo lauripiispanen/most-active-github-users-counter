@@ -1,4 +1,4 @@
-package main
+package top
 
 import (
   "sort"
@@ -9,29 +9,32 @@ import (
   "sync"
   "log"
   "time"
+  "github.com/lauripiispanen/github-top/github"
+  "github.com/lauripiispanen/github-top/cache"
+  "github.com/lauripiispanen/github-top/net"
 )
 
 var companyLogin = regexp.MustCompile(`^\@([a-zA-Z0-9]+)$`)
 
 func GithubTop(options TopOptions) (GithubDataPieces, error) {
-  var token string = options.token
+  var token string = options.Token
   if token == "" {
     return GithubDataPieces{}, errors.New("Missing GITHUB token")
   }
 
-  var num_top = options.amount
+  var num_top = options.Amount
   if num_top == 0 {
     num_top = 256
   }
 
 
   query := "repos:>1+type:user"
-  for _, location := range locations {
+  for _, location := range options.Locations {
     query = fmt.Sprintf("%s+location:%s", query, location)
   }
 
-  var client = NewGithubClient(TokenAuth(token))
-  users, err := client.SearchUsers(UserSearchQuery{q: query, sort: "followers", order: "desc", per_page: 100, pages: options.considerNum / 100})
+  var client = github.NewGithubClient(net.TokenAuth(token))
+  users, err := client.SearchUsers(github.UserSearchQuery{Q: query, Sort: "followers", Order: "desc", Per_page: 100, Pages: options.ConsiderNum / 100})
   if err != nil {
     return GithubDataPieces{}, err
   }
@@ -40,7 +43,7 @@ func GithubTop(options TopOptions) (GithubDataPieces, error) {
   userContributions := make(UserContributions, 0)
   userContribChan := make(chan UserContribution)
 
-  cachingClient := NewGithubClient(DiskCache, TokenAuth(token))
+  cachingClient := github.NewGithubClient(cache.DiskCache, net.TokenAuth(token))
 
 
   var wg sync.WaitGroup
@@ -135,7 +138,7 @@ func (slice UserContributions) Swap(i, j int) {
 }
 
 type GithubDataPiece struct {
-  User          User
+  User          github.User
   Contributions int
   Organizations []string
 }
@@ -155,10 +158,10 @@ func (slice GithubDataPieces) Swap(i, j int) {
 }
 
 type TopOptions struct {
-  token     string
-  locations []string
-  amount    int
-  considerNum int
+  Token     string
+  Locations []string
+  Amount    int
+  ConsiderNum int
 }
 
 type TopOrganization struct {

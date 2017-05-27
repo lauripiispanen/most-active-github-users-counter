@@ -5,6 +5,8 @@ import (
   "log"
   "bufio"
   "os"
+  "github.com/lauripiispanen/github-top/top"
+  "github.com/lauripiispanen/github-top/output"
 )
 
 type arrayFlags []string
@@ -24,26 +26,26 @@ func main() {
   token := flag.String("token", "", "Github auth token")
   amount := flag.Int("amount", 256, "Amount of users to show")
   considerNum := flag.Int("consider", 1000, "Amount of users to consider")
-  output := flag.String("output", "plain", "Output format: plain, csv")
+  outputOpt := flag.String("output", "plain", "Output format: plain, csv")
   fileName := flag.String("file", "", "Output file (optional, defaults to stdout)")
 
   flag.Var(&locations, "location", "Location to query")
   flag.Parse()
 
-  data, err := GithubTop(TopOptions { token: *token, locations: locations, amount: *amount, considerNum: *considerNum })
+  data, err := top.GithubTop(top.TopOptions { Token: *token, Locations: locations, Amount: *amount, ConsiderNum: *considerNum })
 
   if err != nil {
     log.Fatal(err)
   }
 
-  var format OutputFormat
+  var format output.OutputFormat
 
-  if *output == "plain" {
-    format = PlainOutput
-  } else if *output == "yaml" {
-    format = YamlOutput
-  } else if *output == "csv" {
-    format = CsvOutput
+  if *outputOpt == "plain" {
+    format = output.PlainOutput
+  } else if *outputOpt == "yaml" {
+    format = output.YamlOutput
+  } else if *outputOpt == "csv" {
+    format = output.CsvOutput
   }
 
   var writer *bufio.Writer

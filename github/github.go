@@ -1,4 +1,4 @@
-package main
+package github
 
 import (
   "strconv"
@@ -9,12 +9,13 @@ import (
   "encoding/xml"
   "log"
   "time"
+  "github.com/lauripiispanen/github-top/net"
 )
 
 const root string = "https://api.github.com/"
 
 type HttpGithubClient struct {
-  wrappers []wrapper
+  wrappers []net.Wrapper
 }
 
 func (c HttpGithubClient) Request(url string) ([]byte, error) {
@@ -25,7 +26,7 @@ func (c HttpGithubClient) Request(url string) ([]byte, error) {
     return []byte{}, err
   }
 
-  return compose(c.wrappers...)(Requester(client))(req)
+  return net.Compose(c.wrappers...)(net.MakeRequester(client))(req)
 }
 
 func (client HttpGithubClient) CurrentUser() (User, error) {
@@ -56,15 +57,15 @@ func (client HttpGithubClient) User(login string) (User, error) {
 
 func (client HttpGithubClient) SearchUsers(query UserSearchQuery) ([]string, error) {
   v := url.Values {}
-  v.Set("q", query.q)
-  v.Set("sort", query.sort)
-  v.Set("order", query.order)
-  if query.per_page > 0 {
-    v.Set("per_page", strconv.Itoa(query.per_page))
+  v.Set("q", query.Q)
+  v.Set("sort", query.Sort)
+  v.Set("order", query.Order)
+  if query.Per_page > 0 {
+    v.Set("per_page", strconv.Itoa(query.Per_page))
   }
   pages := 1
-  if query.pages > 0 {
-    pages = query.pages
+  if query.Pages > 0 {
+    pages = query.Pages
   }
   if pages > 10 {
     pages = 10
@@ -193,7 +194,7 @@ type OrgResponse struct {
   Organization  string `json:"login"`
 }
 
-func NewGithubClient(wrappers ...wrapper) HttpGithubClient {
+func NewGithubClient(wrappers ...net.Wrapper) HttpGithubClient {
   return HttpGithubClient { wrappers: wrappers }
 }
 
@@ -208,9 +209,9 @@ type User struct {
 }
 
 type UserSearchQuery struct {
-  q           string
-  sort        string
-  order       string
-  per_page    int
-  pages       int
+  Q           string
+  Sort        string
+  Order       string
+  Per_page    int
+  Pages       int
 }

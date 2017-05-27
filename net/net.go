@@ -1,15 +1,15 @@
-package main
+package net
 
 import "net/http"
 import "fmt"
 import "io/ioutil"
 
-type requester func(req *http.Request) ([]byte, error)
+type Requester func(req *http.Request) ([]byte, error)
 
-type wrapper func(requester) requester
+type Wrapper func(Requester) Requester
 
-func compose(wrappers ...wrapper) wrapper {
-  return func(r requester) requester {
+func Compose(wrappers ...Wrapper) Wrapper {
+  return func(r Requester) Requester {
     for _, wrapper := range wrappers {
       r = wrapper(r)
     }
@@ -17,8 +17,8 @@ func compose(wrappers ...wrapper) wrapper {
   }
 }
 
-func TokenAuth(token string) wrapper {
-  return func(r requester) requester {
+func TokenAuth(token string) Wrapper {
+  return func(r Requester) Requester {
     return func(req *http.Request) ([]byte, error) {
       req.Header.Add("Authorization", fmt.Sprintf("token %s", token))
       return r(req)
@@ -26,7 +26,7 @@ func TokenAuth(token string) wrapper {
   }
 }
 
-func Requester(client *http.Client) requester {
+func MakeRequester(client *http.Client) Requester {
   return func(req *http.Request) ([]byte, error) {
     resp, err := client.Do(req)
 
