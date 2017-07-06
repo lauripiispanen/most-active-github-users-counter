@@ -28,9 +28,14 @@ func main() {
   considerNum := flag.Int("consider", 1000, "Amount of users to consider")
   outputOpt := flag.String("output", "plain", "Output format: plain, csv")
   fileName := flag.String("file", "", "Output file (optional, defaults to stdout)")
+  preset := flag.String("preset", "", "Preset (optional)")
 
   flag.Var(&locations, "location", "Location to query")
   flag.Parse()
+
+  if *preset != "" {
+    locations = Preset(*preset)
+  }
 
   data, err := top.GithubTop(top.TopOptions { Token: *token, Locations: locations, Amount: *amount, ConsiderNum: *considerNum })
 
