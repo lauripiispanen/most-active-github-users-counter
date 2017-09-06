@@ -54,7 +54,6 @@ func GithubTop(options TopOptions) (GithubDataPieces, error) {
   for _, username := range users {
     go func(username string) {
       defer wg.Done()
-
       count, err := cachingClient.NumContributions(username)
       if err != nil {
         log.Fatal(err)
@@ -75,6 +74,9 @@ func GithubTop(options TopOptions) (GithubDataPieces, error) {
   wg.Wait()
 
   sort.Sort(userContributions)
+  if (len(userContributions) < num_top) {
+    num_top = len(userContributions)
+  }
 
   userContributions = userContributions[:num_top]
 
