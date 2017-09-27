@@ -7,7 +7,7 @@ import (
     "log"
     "io/ioutil"
     "net/http"
-    "github.com/lauripiispanen/github-top/net"
+    "github.com/lauripiispanen/most-active-github-users-counter/net"
   )
 
 type producer func() ([]byte, error)

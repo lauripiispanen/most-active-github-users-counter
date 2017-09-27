@@ -9,9 +9,9 @@ import (
   "sync"
   "log"
   "time"
-  "github.com/lauripiispanen/github-top/github"
-  "github.com/lauripiispanen/github-top/cache"
-  "github.com/lauripiispanen/github-top/net"
+  "github.com/lauripiispanen/most-active-github-users-counter/github"
+  "github.com/lauripiispanen/most-active-github-users-counter/cache"
+  "github.com/lauripiispanen/most-active-github-users-counter/net"
 )
 
 var companyLogin = regexp.MustCompile(`^\@([a-zA-Z0-9]+)$`)

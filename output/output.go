@@ -7,7 +7,7 @@ import (
   "encoding/csv"
   "strings"
   "time"
-  "github.com/lauripiispanen/github-top/top"
+  "github.com/lauripiispanen/most-active-github-users-counter/top"
 )
 
 type OutputFormat func(data top.GithubDataPieces, writer io.Writer) error

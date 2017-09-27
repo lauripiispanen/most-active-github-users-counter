@@ -9,7 +9,7 @@ import (
   "encoding/xml"
   "log"
   "time"
-  "github.com/lauripiispanen/github-top/net"
+  "github.com/lauripiispanen/most-active-github-users-counter/net"
 )
 
 const root string = "https://api.github.com/"
