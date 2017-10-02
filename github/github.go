@@ -149,7 +149,7 @@ type ContributionsSvgRoot struct {
 func (client HttpGithubClient) NumContributions(login string) (int, error) {
   body, err := client.Request(fmt.Sprintf("https://github.com/users/%s/contributions", login))
   if err != nil {
-    log.Fatalf("error requesting contributions for user %+v", login)
+    log.Fatalf("error requesting contributions for user %+v: %+v", login, err)
     return -1, err
   }
   graph := ContributionsSvgRoot {}
