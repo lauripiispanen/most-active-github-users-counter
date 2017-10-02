@@ -10,7 +10,6 @@ import (
   "log"
   "time"
   "github.com/lauripiispanen/most-active-github-users-counter/github"
-  "github.com/lauripiispanen/most-active-github-users-counter/cache"
   "github.com/lauripiispanen/most-active-github-users-counter/net"
 )
 
@@ -43,9 +42,6 @@ func GithubTop(options TopOptions) (GithubDataPieces, error) {
   userContributions := make(UserContributions, 0)
   userContribChan := make(chan UserContribution)
 
-  cachingClient := github.NewGithubClient(cache.DiskCache, net.TokenAuth(token))
-
-
   var wg sync.WaitGroup
   wg.Add(len(users))
 
@@ -54,7 +50,7 @@ func GithubTop(options TopOptions) (GithubDataPieces, error) {
   for _, username := range users {
     go func(username string) {
       defer wg.Done()
-      count, err := cachingClient.NumContributions(username)
+      count, err := client.NumContributions(username)
       if err != nil {
         log.Fatal(err)
       }
@@ -89,12 +85,12 @@ func GithubTop(options TopOptions) (GithubDataPieces, error) {
   for _, user := range userContributions {
     go func(user UserContribution) {
       defer wg.Done()
-      u, err := cachingClient.User(user.Username)
+      u, err := client.User(user.Username)
       if err != nil {
         log.Fatal(err)
       }
 
-      orgs, err := cachingClient.Organizations(user.Username)
+      orgs, err := client.Organizations(user.Username)
       if err != nil {
         log.Fatal(err)
       }
