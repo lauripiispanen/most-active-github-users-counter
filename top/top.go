@@ -6,7 +6,6 @@ import (
   "fmt"
   "regexp"
   "strings"
-  "sync"
   "log"
   "time"
   "github.com/lauripiispanen/most-active-github-users-counter/github"
@@ -42,14 +41,10 @@ func GithubTop(options TopOptions) (GithubDataPieces, error) {
   userContributions := make(UserContributions, 0)
   userContribChan := make(chan UserContribution)
 
-  var wg sync.WaitGroup
-  wg.Add(len(users))
-
   throttle := time.Tick(time.Second / 10)
 
   for _, username := range users {
     go func(username string) {
-      defer wg.Done()
       count, err := client.NumContributions(username)
       if err != nil {
         log.Fatal(err)
@@ -61,13 +56,13 @@ func GithubTop(options TopOptions) (GithubDataPieces, error) {
     <- throttle
   }
 
-  go func() {
-      for userContrib := range userContribChan {
-          userContributions = append(userContributions, userContrib)
-      }
-  }()
+  for userContrib := range userContribChan {
+    userContributions = append(userContributions, userContrib)
+    if (len(userContributions) >= len(users)) {
+      close(userContribChan)
+    }
+  }
 
-  wg.Wait()
 
   sort.Sort(userContributions)
   if (len(userContributions) < num_top) {
@@ -75,16 +70,11 @@ func GithubTop(options TopOptions) (GithubDataPieces, error) {
   }
 
   userContributions = userContributions[:num_top]
-
-
   pieces := make(chan GithubDataPiece)
-  wg.Add(len(userContributions))
-
   throttle = time.Tick(time.Second / 10)
 
   for _, user := range userContributions {
     go func(user UserContribution) {
-      defer wg.Done()
       u, err := client.User(user.Username)
       if err != nil {
         log.Fatal(err)
@@ -101,17 +91,14 @@ func GithubTop(options TopOptions) (GithubDataPieces, error) {
     <- throttle
   }
 
-  go func() {
-      for piece := range pieces {
-          data = append(data, piece)
-      }
-  }()
-
-  wg.Wait()
+  for piece := range pieces {
+    data = append(data, piece)
+    if (len(data) >= len(userContributions)) {
+      close(pieces)
+    }
+  }
 
   sort.Sort(data)
-
-  data = data[:num_top]
 
   return data, nil
 }
