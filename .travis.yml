@@ -11,5 +11,6 @@ deploy:
     secure: VKL+lFe95HwESkKGFpdBxSOus1ige/gVL2Em2T11O77J5kl9polFj+d040oGt4cxqvAHqWoGnFnpYkTGxMYVZ2OpJjbixNT8qEr9oj8dUtqyiUO9qE0re1hjtN+/aOsaH5L7vxaKNycYJVweEqA9MLw7jWsERLclPGSJEfp2tYwx//MQ4/qKmaS+7nN+n7F7sRXLvF551JmstP/EChCceCR+WrWNbMxHDfjyndmCEIgMhu7v2mjvr38qkG8TW4FzxpyQseuB9K2ijCdnw9PHEGZgkzNPt5NFdtPv0DDk7DEUzAFtIcORjfrT88w/YfBER0GgwkldCrxtP8RU/nyiDT8ht9lj7Gan6YVFRbAfDPGqSAp5+fD8lX/OOVuxEWw5XjEdOIqFhcsmTnG3nxARqiFDqY/vVobsW5vv3tFaGRyCwWNfksHjQ44gVq6OTFNni1II6KRq9f+2u7yWr0yd+s5oOm+GErBqmpLlA3rmnqAb0CxqDvK1Qzbpw3xcxZLY+SlItlvX1I0XRv6f5hiG+D3Ouy7umkxwIKW+Pxf/17W1TPjNVNA4USLA4l6xXY11KdlLQmerMHDSTwPo/dYjxuPuWiO+LFJfFMw00gyO+akjXVVv5E1BB+WhX2lFI6Gwq+OK0YVhYkzPVduTg/36HVpldu9dWiUU0a/gJqO+8/E=
   file: github-top
   on:
+    repo: lauripiispanen/most-active-github-users-counter
     tags: true
   skip_cleanup: true
