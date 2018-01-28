@@ -3,7 +3,7 @@ package main
 type PresetLocations []string
 
 var PRESETS = map[string]PresetLocations{
-  "austria":PresetLocations{"austria", "österreich", "vienna", "wien", "linz", "salzburg", "graz", "innsbruck", "villach"},
+  "austria":PresetLocations{"austria", "%C3%B6sterreich", "vienna", "wien", "linz", "salzburg", "graz", "innsbruck", "villach"},
   "finland":PresetLocations{"finland", "suomi", "helsinki", "tampere", "oulu", "espoo", "vantaa", "turku"},
   "sweden":PresetLocations{"sweden", "sverige", "stockholm", "malm%C3%B6", "uppsala", "g%C3%B6teborg", "gothenburg"},
   "norway":PresetLocations{"norway", "norge", "oslo", "bergen"},
