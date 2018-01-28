@@ -37,12 +37,6 @@ func main() {
     locations = Preset(*preset)
   }
 
-  data, err := top.GithubTop(top.TopOptions { Token: *token, Locations: locations, Amount: *amount, ConsiderNum: *considerNum })
-
-  if err != nil {
-    log.Fatal(err)
-  }
-
   var format output.OutputFormat
 
   if *outputOpt == "plain" {
@@ -51,6 +45,14 @@ func main() {
     format = output.YamlOutput
   } else if *outputOpt == "csv" {
     format = output.CsvOutput
+  } else {
+    log.Fatal("Unrecognized output format: ", *outputOpt)
+  }
+
+  data, err := top.GithubTop(top.TopOptions { Token: *token, Locations: locations, Amount: *amount, ConsiderNum: *considerNum })
+
+  if err != nil {
+    log.Fatal(err)
   }
 
   var writer *bufio.Writer
