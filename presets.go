@@ -19,7 +19,9 @@ var PRESETS = map[string]PresetLocations{
   "spain":PresetLocations{"spain","espa%C3%B1a","madrid","barcelona","valencia","seville","sevilla","zaragoza","malaga","murcia","palma","bilbao","alicante","cordoba"},
   "italy":PresetLocations{"italy","italia","rome","roma","milan","naples","napoli","turin","torino","palermo","genoa","genova","bologna","florence","firenze","bari","catania","venice","verona"},
   "uk": PresetLocations{"uk","london","birmingham","leeds","glasgow","sheffield","bradford","manchester","edinburgh","liverpool","bristol","cardiff","belfast","leicester","wakefield","coventry","nottingham","newcastle"},
-  "croatia": PresetLocations{"croatia","hrvatska","zagreb","split","rijeka","osijek","zadar","pula"}}
+  "croatia": PresetLocations{"croatia","hrvatska","zagreb","split","rijeka","osijek","zadar","pula"},
+  "azerbaijan": PresetLocations{"azerbaijan","baku"}
+}
 
 func Preset(name string) []string {
   return PRESETS[name]
