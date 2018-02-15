@@ -20,7 +20,7 @@ func Compose(wrappers ...Wrapper) Wrapper {
 func TokenAuth(token string) Wrapper {
   return func(r Requester) Requester {
     return func(req *http.Request) ([]byte, error) {
-      req.Header.Add("Authorization", fmt.Sprintf("token %s", token))
+      req.Header.Add("Authorization", fmt.Sprintf("bearer %s", token))
       return r(req)
     }
   }

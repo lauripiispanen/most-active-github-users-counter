@@ -4,11 +4,11 @@ import (
   "strconv"
   "fmt"
   "net/http"
-  "net/url"
   "encoding/json"
   "encoding/xml"
   "log"
-  "time"
+  "strings"
+  "regexp"
   "github.com/lauripiispanen/most-active-github-users-counter/net"
 )
 
@@ -18,9 +18,15 @@ type HttpGithubClient struct {
   wrappers []net.Wrapper
 }
 
-func (c HttpGithubClient) Request(url string) ([]byte, error) {
+func (c HttpGithubClient) Request(url string, body string) ([]byte, error) {
   client := &http.Client {}
-  req, err := http.NewRequest("GET", url, nil)
+  var req *http.Request = nil
+  var err error = nil
+  if body != "" {
+    req, err = http.NewRequest("POST", url, strings.NewReader(body))
+  } else {
+    req, err = http.NewRequest("GET", url, nil)
+  }
 
   if err != nil {
     return []byte{}, err
@@ -29,8 +35,9 @@ func (c HttpGithubClient) Request(url string) ([]byte, error) {
   return net.Compose(c.wrappers...)(net.MakeRequester(client))(req)
 }
 
+
 func (client HttpGithubClient) CurrentUser() (User, error) {
-  body, err := client.Request(fmt.Sprintf("%suser", root))
+  body, err := client.Request(fmt.Sprintf("%suser", root), "")
   if err != nil {
     return User {}, err
   }
@@ -43,7 +50,7 @@ func (client HttpGithubClient) CurrentUser() (User, error) {
 }
 
 func (client HttpGithubClient) User(login string) (User, error) {
-  body, err := client.Request(fmt.Sprintf("%susers/%s", root, login))
+  body, err := client.Request(fmt.Sprintf("%susers/%s", root, login), "")
   if err != nil {
     return User {}, err
   }
@@ -55,14 +62,7 @@ func (client HttpGithubClient) User(login string) (User, error) {
   return user, nil
 }
 
-func (client HttpGithubClient) SearchUsers(query UserSearchQuery) ([]string, error) {
-  v := url.Values {}
-  v.Set("q", query.Q)
-  v.Set("sort", query.Sort)
-  v.Set("order", query.Order)
-  if query.Per_page > 0 {
-    v.Set("per_page", strconv.Itoa(query.Per_page))
-  }
+func (client HttpGithubClient) SearchUsers(query UserSearchQuery) ([]User, error) {
   pages := 1
   if query.Pages > 0 {
     pages = query.Pages
@@ -71,69 +71,89 @@ func (client HttpGithubClient) SearchUsers(query UserSearchQuery) ([]string, err
     pages = 10
   }
 
-  logins := []string{}
+  users := []User{}
+
   currentPage := 1
   total_count := 0
-  max_tries_per_page := 10
-
-  throttle := time.Tick(time.Second * 3)
-
+  previousCursor := ""
+  cursorQueryStr := ""
   for currentPage <= pages {
-    items := make([]interface{}, 0)
-
-    CURRENT_PAGE_ATTEMPT:
-    for currentTry := 0; currentTry < max_tries_per_page; currentTry++ {
-      localValues := url.Values {}
-      for k,v := range v {
-        localValues[k] = v
-      }
-      localValues.Set("page", strconv.Itoa(currentPage))
-      q, err := url.QueryUnescape(localValues.Encode())
-      if err != nil {
-        log.Fatal(err)
-      }
-
-      url := fmt.Sprintf("%ssearch/users?%s", root, q)
-
-      fmt.Printf("%s\n", url)
-
-      body, err := client.Request(url)
-      if err != nil {
-        log.Fatal(err)
-      }
-
-      var response interface {}
-      if err := json.Unmarshal(body, &response); err != nil {
-        log.Fatal(err)
-      }
-      m := response.(map[string]interface{})
-      if m["total_count"] == nil {
-        fmt.Printf("Total count was nil for page %+v", currentPage)
-        continue CURRENT_PAGE_ATTEMPT
-      }
-
-      total := int(m["total_count"].(float64))
-      if (total >= total_count) {
-        total_count = total
-        items = m["items"].([]interface{})
-
-        fmt.Printf("Established total count %+v for page %+v\n", total_count, currentPage)
-        if (currentPage > 1) {
-          break CURRENT_PAGE_ATTEMPT
+    if previousCursor != "" {
+      cursorQueryStr = fmt.Sprintf(", after: \\\"%s\\\"", previousCursor)
+    }
+    graphQlString := fmt.Sprintf(`{ "query": "query {
+      search(type: USER, query:\"%s sort:%s-%s\", first: %d%s) {
+        edges {
+          node {
+            __typename
+            ... on User {
+              login,
+              avatarUrl,
+              name,
+              company,
+              organizations(first: 100) {
+                nodes {
+                  login
+                }
+              }
+            }
+          },
+          cursor
         }
       }
-      <- throttle
+    }" }`, query.Q, query.Sort, query.Order, query.Per_page, cursorQueryStr)
+
+    re := regexp.MustCompile(`\r?\n`)
+    graphQlString = re.ReplaceAllString(graphQlString, " ")
+
+    body, err := client.Request("https://api.github.com/graphql", graphQlString)
+    if err != nil {
+      log.Fatal(err)
     }
 
-    for _, item := range items {
-      login := item.(map[string]interface{})["login"].(string)
-      logins = append(logins, login)
+    var response interface {}
+    if err := json.Unmarshal(body, &response); err != nil {
+      log.Fatal(err)
     }
+    rootNode := response.(map[string]interface{})
+    dataNode := rootNode["data"].(map[string]interface{})
+    searchNode := dataNode["search"].(map[string]interface{})
+    edgeNodes := searchNode["edges"].([]interface{})
+    total_count += len(edgeNodes)
+    for _, edge := range edgeNodes {
+      edgeNode := edge.(map[string]interface{})
+      userNode := edgeNode["node"].(map[string]interface{})
+      login := userNode["login"].(string)
+      avatarUrl := userNode["avatarUrl"].(string)
+      name := strPropOrEmpty(userNode, "name")
+      company := strPropOrEmpty(userNode, "company")
+      organizations := []string{}
 
+      orgNodes := userNode["organizations"].(map[string]interface{})["nodes"].([]interface{})
+      for _, orgNode := range orgNodes {
+
+        organizations = append(organizations, orgNode.(map[string]interface{})["login"].(string))
+      }
+
+      user := User{ Login: login, AvatarUrl: avatarUrl, Name: name, Company: company, Organizations: organizations}
+      users = append(users, user)
+
+      previousCursor = edgeNode["cursor"].(string)
+    }
     currentPage += 1
   }
 
-  return logins, nil
+  return users, nil
+}
+
+func strPropOrEmpty(obj map[string]interface{}, prop string) string {
+  switch t := obj[prop].(type) {
+    case string:
+      return t
+    default:
+      return ""
+  }
+
 }
 
 type ContributionsSvgRoot struct {
@@ -147,7 +167,7 @@ type ContributionsSvgRoot struct {
 }
 
 func (client HttpGithubClient) NumContributions(login string) (int, error) {
-  body, err := client.Request(fmt.Sprintf("https://github.com/users/%s/contributions", login))
+  body, err := client.Request(fmt.Sprintf("https://github.com/users/%s/contributions", login), "")
   if err != nil {
     log.Fatalf("error requesting contributions for user %+v: %+v", login, err)
     return -1, err
@@ -170,7 +190,7 @@ func (client HttpGithubClient) NumContributions(login string) (int, error) {
 
 func (client HttpGithubClient) Organizations(login string) ([]string, error) {
   url := fmt.Sprintf("https://api.github.com/users/%s/orgs", login)
-  body, err := client.Request(url)
+  body, err := client.Request(url, "")
   if err != nil {
     log.Fatalf("error requesting organizations for user %+v", login)
     return []string{}, err
@@ -199,13 +219,11 @@ func NewGithubClient(wrappers ...net.Wrapper) HttpGithubClient {
 }
 
 type User struct {
-  Login        string
-  Id           int
-  Name         string
-  Location     string
-  Company      string
-  Followers    int
-  PublicRepos  int `json:"public_repos"`
+  Login           string
+  AvatarUrl       string
+  Name            string
+  Company         string
+  Organizations   []string
 }
 
 type UserSearchQuery struct {

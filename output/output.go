@@ -15,7 +15,7 @@ type OutputFormat func(data top.GithubDataPieces, writer io.Writer) error
 func PlainOutput(data top.GithubDataPieces, writer io.Writer) error {
   fmt.Fprintln(writer, "USERS\n--------")
   for i, piece := range data {
-    fmt.Fprintf(writer, "#%+v: %+v (%+v):%+v (%+v) %+v\n", i + 1, piece.User.Name, piece.User.Login, piece.Contributions, piece.User.Company, strings.Join(piece.Organizations, ","))
+    fmt.Fprintf(writer, "#%+v: %+v (%+v):%+v (%+v) %+v\n", i + 1, piece.User.Name, piece.User.Login, piece.Contributions, piece.User.Company, strings.Join(piece.User.Organizations, ","))
   }
   fmt.Fprintln(writer, "\nORGANIZATIONS\n--------")
   for i, org := range data.TopOrgs(10) {
@@ -34,7 +34,7 @@ func CsvOutput(data top.GithubDataPieces, writer io.Writer) error {
     name := piece.User.Name
     login := piece.User.Login
     contribs := strconv.Itoa(piece.Contributions)
-    orgs := strings.Join(piece.Organizations, ",")
+    orgs := strings.Join(piece.User.Organizations, ",")
     company := piece.User.Company
     if err := w.Write([]string{ rank, name, login, contribs, company, orgs }); err != nil {
       return err
@@ -53,7 +53,7 @@ func YamlOutput(data top.GithubDataPieces, writer io.Writer) error {
   - rank: %+v
     name: '%+v'
     login: '%+v'
-    id: %+v
+    avatarUrl: %+v
     contributions: %+v
     company: '%+v'
     organizations: '%+v'
@@ -61,10 +61,10 @@ func YamlOutput(data top.GithubDataPieces, writer io.Writer) error {
       i + 1,
       strings.Replace(piece.User.Name, "'", "''", -1),
       strings.Replace(piece.User.Login, "'", "''", -1),
-      piece.User.Id,
+      piece.User.AvatarUrl,
       piece.Contributions,
       strings.Replace(piece.User.Company, "'", "''", -1),
-      strings.Replace(strings.Join(piece.Organizations, ","), "'", "''", -1))
+      strings.Replace(strings.Join(piece.User.Organizations, ","), "'", "''", -1))
   }
   fmt.Fprintln(writer, "\norganizations:")
 

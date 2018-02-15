@@ -26,9 +26,9 @@ func GithubTop(options TopOptions) (GithubDataPieces, error) {
   }
 
 
-  query := "repos:>1+type:user"
+  query := "repos:>1 type:user"
   for _, location := range options.Locations {
-    query = fmt.Sprintf("%s+location:%s", query, location)
+    query = fmt.Sprintf("%s location:%s", query, location)
   }
 
   var client = github.NewGithubClient(net.TokenAuth(token))
@@ -37,55 +37,19 @@ func GithubTop(options TopOptions) (GithubDataPieces, error) {
     return GithubDataPieces{}, err
   }
 
-  data := GithubDataPieces{}
-  userContributions := make(UserContributions, 0)
-  userContribChan := make(chan UserContribution)
 
+  data := GithubDataPieces{}
+
+  pieces := make(chan GithubDataPiece)
   throttle := time.Tick(time.Second / 10)
 
-  for _, username := range users {
-    go func(username string) {
-      count, err := client.NumContributions(username)
+  for _, user := range users {
+    go func(user github.User) {
+      count, err := client.NumContributions(user.Login)
       if err != nil {
         log.Fatal(err)
       }
-
-      userContribChan <- UserContribution{ Username: username, Contributions: count }
-    }(username)
-
-    <- throttle
-  }
-
-  for userContrib := range userContribChan {
-    userContributions = append(userContributions, userContrib)
-    if (len(userContributions) >= len(users)) {
-      close(userContribChan)
-    }
-  }
-
-
-  sort.Sort(userContributions)
-  if (len(userContributions) < num_top) {
-    num_top = len(userContributions)
-  }
-
-  userContributions = userContributions[:num_top]
-  pieces := make(chan GithubDataPiece)
-  throttle = time.Tick(time.Second / 10)
-
-  for _, user := range userContributions {
-    go func(user UserContribution) {
-      u, err := client.User(user.Username)
-      if err != nil {
-        log.Fatal(err)
-      }
-
-      orgs, err := client.Organizations(user.Username)
-      if err != nil {
-        log.Fatal(err)
-      }
-
-      pieces <- GithubDataPiece{ User: u, Contributions: user.Contributions, Organizations: orgs }
+      pieces <- GithubDataPiece{ User: user, Contributions: count }
     }(user)
 
     <- throttle
@@ -93,39 +57,23 @@ func GithubTop(options TopOptions) (GithubDataPieces, error) {
 
   for piece := range pieces {
     data = append(data, piece)
-    if (len(data) >= len(userContributions)) {
+    if (len(data) >= len(users)) {
       close(pieces)
     }
   }
 
   sort.Sort(data)
+  if (len(data) < num_top) {
+    num_top = len(data)
+  }
+  data = data[:num_top]
 
   return data, nil
-}
-
-type UserContribution struct {
-  Username      string
-  Contributions int
-}
-
-type UserContributions []UserContribution
-
-func (slice UserContributions) Len() int {
-    return len(slice)
-}
-
-func (slice UserContributions) Less(i, j int) bool {
-    return slice[i].Contributions > slice[j].Contributions
-}
-
-func (slice UserContributions) Swap(i, j int) {
-    slice[i], slice[j] = slice[j], slice[i]
 }
 
 type GithubDataPiece struct {
   User          github.User
   Contributions int
-  Organizations []string
 }
 
 type GithubDataPieces []GithubDataPiece
@@ -173,7 +121,7 @@ func (pieces GithubDataPieces) TopOrgs(count int) TopOrganizations {
   orgs_map := make(map[string]int)
   for _, piece := range pieces {
     user := piece.User
-    user_orgs := piece.Organizations
+    user_orgs := user.Organizations
     org_matches := companyLogin.FindStringSubmatch(strings.Trim(user.Company, " "))
     if (len(org_matches) > 0) {
       org_login := companyLogin.FindStringSubmatch(strings.Trim(user.Company, " "))[1]
