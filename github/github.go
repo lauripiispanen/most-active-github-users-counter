@@ -116,6 +116,9 @@ func (client HttpGithubClient) SearchUsers(query UserSearchQuery) ([]User, error
       log.Fatal(err)
     }
     rootNode := response.(map[string]interface{})
+    if val, ok := rootNode["errors"]; ok {
+      log.Fatalf("%s", val)
+    }
     dataNode := rootNode["data"].(map[string]interface{})
     searchNode := dataNode["search"].(map[string]interface{})
     edgeNodes := searchNode["edges"].([]interface{})
