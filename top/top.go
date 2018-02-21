@@ -41,7 +41,7 @@ func GithubTop(options TopOptions) (GithubDataPieces, error) {
   data := GithubDataPieces{}
 
   pieces := make(chan GithubDataPiece)
-  throttle := time.Tick(time.Second / 10)
+  throttle := time.Tick(time.Second / 20)
 
   for _, user := range users {
     go func(user github.User) {
