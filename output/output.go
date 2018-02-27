@@ -53,7 +53,7 @@ func YamlOutput(data top.GithubDataPieces, writer io.Writer) error {
   - rank: %+v
     name: '%+v'
     login: '%+v'
-    avatarUrl: %+v
+    avatarUrl: '%+v'
     contributions: %+v
     company: '%+v'
     organizations: '%+v'
