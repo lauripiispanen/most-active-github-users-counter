@@ -88,7 +88,7 @@ func (client HttpGithubClient) SearchUsers(query UserSearchQuery) ([]User, error
             __typename
             ... on User {
               login,
-              avatarUrl,
+              avatarUrl(size: 80),
               name,
               company,
               organizations(first: 100) {
