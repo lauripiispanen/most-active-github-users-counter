@@ -23,6 +23,7 @@ var PRESETS = map[string]PresetLocations{
   "worldwide": PresetLocations{},
   "china": PresetLocations{"china", "%E4%B8%AD%E5%9B%BD", "guangzhou", "shanghai", "beijing", "hangzhou", "hong%2Bkong"},
   "india": PresetLocations{"india", "mumbai", "delhi", "bangalore", "hyderabad", "ahmedabad", "chennai", "kolkata", "jaipur"},
+  "israel": PresetLocations{"israel", "tel%2Baviv", "jerusalem", "beer%2Bsheva", "beersheva", "netanya", "ramat%2Bgan", "haifa", "herzliya", "rishon"},
   "indonesia": PresetLocations{"indonesia", "jakarta", "surabaya", "bandung", "medan", "bekasi", "semarang", "tangerang", "depok", "makassar", "palembang"},
   "pakistan": PresetLocations{"pakistan", "karachi", "lahore", "faisalabad", "rawalpindi", "peshawar", "islamabad"},
   "brazil": PresetLocations{"brazil", "brasil", "s%C3%A3o%20paulo", "bras%C3%ADlia", "salvador", "fortaleza", "belo%20horizonte", "manaus", "curitiba", "recife", "porto%20alegre"},
