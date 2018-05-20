@@ -8,7 +8,7 @@ var PRESETS = map[string]PresetLocations{
   "sweden":PresetLocations{"sweden", "sverige", "stockholm", "malm%C3%B6", "uppsala", "g%C3%B6teborg", "gothenburg"},
   "norway":PresetLocations{"norway", "norge", "oslo", "bergen"},
   "germany":PresetLocations{"germany", "deutschland", "berlin", "frankfurt", "munich", "m%C3%BCnchen", "hamburg", "cologne", "k%C3%B6ln"},
-  "netherlands":PresetLocations{"netherlands", "nederland", "amsterdam", "rotterdam", "hague", "utrecht", "holland"},
+  "netherlands":PresetLocations{"netherlands", "nederland", "amsterdam", "rotterdam", "hague", "utrecht", "holland", "delft"},
   "ukraine":PresetLocations{"ukraine", "kiev", "kyiv", "kharkiv", "dnipro", "odesa", "donetsk", "zaporizhia"},
   "japan":PresetLocations{"japan", "tokyo", "yokohama", "osaka", "nagoya", "sapporo", "kobe", "kyoto", "fukuoka", "kawasaki", "saitama", "hiroshima", "sendai"},
   "russia":PresetLocations{"russia", "moscow", "saint%2Bpetersburg", "novosibirsk", "yekaterinburg", "nizhny%2Bnovgorod", "samara", "omsk", "kazan", "chelyabinsk", "rostov-on-don", "ufa", "volgograd"},
@@ -47,7 +47,8 @@ var PRESETS = map[string]PresetLocations{
   "kenya":PresetLocations{"kenya","nairobi","mombasa","kisumu","nakuru","eldoret","kisii"},
   "argentina":PresetLocations{"argentina","buenos%2Baires","cordoba","rosario","mendoza","la%2Bplata","tucuman","mar%2Bdel%2Bplata","salta","resistencia"},
   "algeria":PresetLocations{"algeria","algiers","oran","constantine","annaba","blida","batna","djelfa","setif","sidi%2Bbel%2Babbes","biskra"},
-  "sudan":PresetLocations{"sudan","khartoum","omdurman"}}
+  "sudan":PresetLocations{"sudan","khartoum","omdurman"},
+  "poland":PresetLocations{"poland","polska","warsaw","krakow","lodz","wroclaw","poznan","gdansk","szczecin","bydgoszcz","lublin","katowice","bialystok"}}
 
 func Preset(name string) []string {
   return PRESETS[name]
