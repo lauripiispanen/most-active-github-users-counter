@@ -40,11 +40,12 @@ var PRESETS = map[string]PresetLocations{
   "turkey": PresetLocations{"turkey", "turkiye", "istanbul", "ankara", "izmir", "bursa", "adana", "gaziantep", "konya", "antalya", "kayseri", "mersin", "eskisehir", "samsun", "denizli", "malatya"},
   "thailand": PresetLocations{"thailand", "bangkok", "nonthaburi", "nakhon", "phuket", "pattaya", "chiang%2Bmai"},
   "south africa": PresetLocations{"south%2Bafrica", "south%2Bafrica", "johannesburg", "cape%2Btown", "rsa", "durban", "port%2Belizabeth", "pretoria", "nelspruit"},
-  "myanmar": PresetLocations{"myanmar", "burma", "yangon", "rangoon", "mandalay", "nay+pyi+taw", "taunggyi", "bago", "mawlamyine"},
+  "myanmar": PresetLocations{"myanmar", "burma", "yangon", "rangoon", "mandalay", "nay%2Bpyi%2Btaw", "taunggyi", "bago", "mawlamyine"},
   "tanzania": PresetLocations{"tanzania", "dar%2Bes%2Bsalaam", "mwanza", "arusha", "dodoma", "mbeya", "morogoro", "tanga", "kilimanjaro"},
   "south korea": PresetLocations{"south%2Bkorea", "ROK", "korea", "seoul", "busan", "incheon", "daegu", "daejeon", "gwangju", "%EB%8C%80%ED%95%9C%EB%AF%BC%EA%B5%AD", "%EC%84%9C%EC%9A%B8", "%EC%84%9C%EC%9A%B8%EC%8B%9C"},
   "colombia":PresetLocations{"colombia","bogota","medellin","cali","barranquilla","cartagena","cucuta","bucaramanga","ibague","soledad","pereira","santa%2Bmarta"},
-  "kenya":PresetLocations{"kenya","nairobi","mombasa","kisumu","nakuru","eldoret","kisii"}}
+  "kenya":PresetLocations{"kenya","nairobi","mombasa","kisumu","nakuru","eldoret","kisii"},
+  "argentina":PresetLocations{"argentina","buenos%2Baires","cordoba","rosario","mendoza","la%2Bplata","tucuman","mar%2Bdel%2Bplata","salta","resistencia"}}
 
 func Preset(name string) []string {
   return PRESETS[name]
