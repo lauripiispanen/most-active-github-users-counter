@@ -131,7 +131,8 @@ func (pieces GithubDataPieces) TopOrgs(count int) TopOrganizations {
     }
 
     for _, o := range user_orgs {
-      orgs_map[o] = orgs_map[o] + 1
+      org := strings.ToLower(o)
+      orgs_map[org] = orgs_map[org] + 1
     }
   }
 
