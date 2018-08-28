@@ -5,11 +5,11 @@ import (
   "fmt"
   "net/http"
   "encoding/json"
-  "encoding/xml"
   "log"
   "strings"
   "regexp"
   "github.com/lauripiispanen/most-active-github-users-counter/net"
+  "github.com/anaskhan96/soup"
 )
 
 const root string = "https://api.github.com/"
@@ -159,33 +159,22 @@ func strPropOrEmpty(obj map[string]interface{}, prop string) string {
 
 }
 
-type ContributionsSvgRoot struct {
-  G struct {
-    G []struct {
-      Rect []struct {
-        Count string `xml:"data-count,attr"`
-      } `xml:"rect"`
-    } `xml:"g"`
-  } `xml:"g"`
-}
-
 func (client HttpGithubClient) NumContributions(login string) (int, error) {
   body, err := client.Request(fmt.Sprintf("https://github.com/users/%s/contributions", login), "")
   if err != nil {
     log.Fatalf("error requesting contributions for user %+v: %+v", login, err)
     return -1, err
   }
-  graph := ContributionsSvgRoot {}
-  err = xml.Unmarshal(body, &graph)
+  doc := soup.HTMLParse(string(body))
+  dayNodes := doc.FindAll("rect", "class", "day")
+
   count := 0
-  for _, s := range graph.G.G {
-    for _, r := range s.Rect {
-      i, err := strconv.Atoi(r.Count)
+  for _, dayNode := range dayNodes {
+    i, err := strconv.Atoi(dayNode.Attrs()["data-count"])
       if err != nil {
         return -1, err
       }
       count += int(i)
-    }
   }
 
   return count, err
