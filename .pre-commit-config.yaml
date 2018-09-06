@@ -1,0 +1,6 @@
+repos:
+- repo: git://github.com/dnephin/pre-commit-golang
+  rev: v0.3.2
+  hooks:
+    - id: go-fmt
+    - id: go-vet
