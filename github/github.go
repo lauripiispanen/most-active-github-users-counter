@@ -14,14 +14,14 @@ import (
 
 const root string = "https://api.github.com/"
 
-type HttpGithubClient struct {
+type HTTPGithubClient struct {
 	wrappers []net.Wrapper
 }
 
-func (c HttpGithubClient) Request(url string, body string) ([]byte, error) {
-	client := &http.Client{}
-	var req *http.Request = nil
-	var err error = nil
+func (client HTTPGithubClient) Request(url string, body string) ([]byte, error) {
+	httpClient := &http.Client{}
+	var req *http.Request
+	var err error
 	if body != "" {
 		req, err = http.NewRequest("POST", url, strings.NewReader(body))
 	} else {
@@ -32,10 +32,10 @@ func (c HttpGithubClient) Request(url string, body string) ([]byte, error) {
 		return []byte{}, err
 	}
 
-	return net.Compose(c.wrappers...)(net.MakeRequester(client))(req)
+	return net.Compose(client.wrappers...)(net.MakeRequester(httpClient))(req)
 }
 
-func (client HttpGithubClient) CurrentUser() (User, error) {
+func (client HTTPGithubClient) CurrentUser() (User, error) {
 	body, err := client.Request(fmt.Sprintf("%suser", root), "")
 	if err != nil {
 		return User{}, err
@@ -48,7 +48,7 @@ func (client HttpGithubClient) CurrentUser() (User, error) {
 	return user, nil
 }
 
-func (client HttpGithubClient) User(login string) (User, error) {
+func (client HTTPGithubClient) User(login string) (User, error) {
 	body, err := client.Request(fmt.Sprintf("%susers/%s", root, login), "")
 	if err != nil {
 		return User{}, err
@@ -61,7 +61,7 @@ func (client HttpGithubClient) User(login string) (User, error) {
 	return user, nil
 }
 
-func (client HttpGithubClient) SearchUsers(query UserSearchQuery) ([]User, error) {
+func (client HTTPGithubClient) SearchUsers(query UserSearchQuery) ([]User, error) {
 	pages := 1
 	if query.Pages > 0 {
 		pages = query.Pages
@@ -73,7 +73,7 @@ func (client HttpGithubClient) SearchUsers(query UserSearchQuery) ([]User, error
 	users := []User{}
 
 	currentPage := 1
-	total_count := 0
+	totalCount := 0
 	previousCursor := ""
 	cursorQueryStr := ""
 	for currentPage <= pages {
@@ -100,7 +100,7 @@ func (client HttpGithubClient) SearchUsers(query UserSearchQuery) ([]User, error
           cursor
         }
       }
-    }" }`, query.Q, query.Sort, query.Order, query.Per_page, cursorQueryStr)
+    }" }`, query.Q, query.Sort, query.Order, query.PerPage, cursorQueryStr)
 
 		re := regexp.MustCompile(`\r?\n`)
 		graphQlString = re.ReplaceAllString(graphQlString, " ")
@@ -121,12 +121,12 @@ func (client HttpGithubClient) SearchUsers(query UserSearchQuery) ([]User, error
 		dataNode := rootNode["data"].(map[string]interface{})
 		searchNode := dataNode["search"].(map[string]interface{})
 		edgeNodes := searchNode["edges"].([]interface{})
-		total_count += len(edgeNodes)
+		totalCount += len(edgeNodes)
 		for _, edge := range edgeNodes {
 			edgeNode := edge.(map[string]interface{})
 			userNode := edgeNode["node"].(map[string]interface{})
 			login := userNode["login"].(string)
-			avatarUrl := userNode["avatarUrl"].(string)
+			avatarURL := userNode["avatarUrl"].(string)
 			name := strPropOrEmpty(userNode, "name")
 			company := strPropOrEmpty(userNode, "company")
 			organizations := []string{}
@@ -137,12 +137,12 @@ func (client HttpGithubClient) SearchUsers(query UserSearchQuery) ([]User, error
 				organizations = append(organizations, orgNode.(map[string]interface{})["login"].(string))
 			}
 
-			user := User{Login: login, AvatarUrl: avatarUrl, Name: name, Company: company, Organizations: organizations}
+			user := User{Login: login, AvatarURL: avatarURL, Name: name, Company: company, Organizations: organizations}
 			users = append(users, user)
 
 			previousCursor = edgeNode["cursor"].(string)
 		}
-		currentPage += 1
+		currentPage++
 	}
 
 	return users, nil
@@ -158,7 +158,7 @@ func strPropOrEmpty(obj map[string]interface{}, prop string) string {
 
 }
 
-func (client HttpGithubClient) NumContributions(login string) (int, error) {
+func (client HTTPGithubClient) NumContributions(login string) (int, error) {
 	body, err := client.Request(fmt.Sprintf("https://github.com/users/%s/contributions", login), "")
 	if err != nil {
 		log.Fatalf("error requesting contributions for user %+v: %+v", login, err)
@@ -179,7 +179,7 @@ func (client HttpGithubClient) NumContributions(login string) (int, error) {
 	return count, err
 }
 
-func (client HttpGithubClient) Organizations(login string) ([]string, error) {
+func (client HTTPGithubClient) Organizations(login string) ([]string, error) {
 	url := fmt.Sprintf("https://api.github.com/users/%s/orgs", login)
 	body, err := client.Request(url, "")
 	if err != nil {
@@ -205,22 +205,22 @@ type OrgResponse struct {
 	Organization string `json:"login"`
 }
 
-func NewGithubClient(wrappers ...net.Wrapper) HttpGithubClient {
-	return HttpGithubClient{wrappers: wrappers}
+func NewGithubClient(wrappers ...net.Wrapper) HTTPGithubClient {
+	return HTTPGithubClient{wrappers: wrappers}
 }
 
 type User struct {
 	Login         string
-	AvatarUrl     string
+	AvatarURL     string
 	Name          string
 	Company       string
 	Organizations []string
 }
 
 type UserSearchQuery struct {
-	Q        string
-	Sort     string
-	Order    string
-	Per_page int
-	Pages    int
+	Q       string
+	Sort    string
+	Order   string
+	PerPage int
+	Pages   int
 }

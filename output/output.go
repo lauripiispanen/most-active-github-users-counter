@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-type OutputFormat func(data top.GithubDataPieces, writer io.Writer) error
+type Format func(data top.GithubDataPieces, writer io.Writer) error
 
 func PlainOutput(data top.GithubDataPieces, writer io.Writer) error {
 	fmt.Fprintln(writer, "USERS\n--------")
@@ -61,7 +61,7 @@ func YamlOutput(data top.GithubDataPieces, writer io.Writer) error {
 			i+1,
 			strings.Replace(piece.User.Name, "'", "''", -1),
 			strings.Replace(piece.User.Login, "'", "''", -1),
-			piece.User.AvatarUrl,
+			piece.User.AvatarURL,
 			piece.Contributions,
 			strings.Replace(piece.User.Company, "'", "''", -1),
 			strings.Replace(strings.Join(piece.User.Organizations, ","), "'", "''", -1))

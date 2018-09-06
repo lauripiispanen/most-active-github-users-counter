@@ -14,15 +14,15 @@ import (
 
 var companyLogin = regexp.MustCompile(`^\@([a-zA-Z0-9]+)$`)
 
-func GithubTop(options TopOptions) (GithubDataPieces, error) {
-	var token string = options.Token
+func GithubTop(options Options) (GithubDataPieces, error) {
+	var token = options.Token
 	if token == "" {
 		return GithubDataPieces{}, errors.New("Missing GITHUB token")
 	}
 
-	var num_top = options.Amount
-	if num_top == 0 {
-		num_top = 256
+	var numTop = options.Amount
+	if numTop == 0 {
+		numTop = 256
 	}
 
 	query := "repos:>1 type:user"
@@ -31,7 +31,7 @@ func GithubTop(options TopOptions) (GithubDataPieces, error) {
 	}
 
 	var client = github.NewGithubClient(net.TokenAuth(token))
-	users, err := client.SearchUsers(github.UserSearchQuery{Q: query, Sort: "followers", Order: "desc", Per_page: 100, Pages: options.ConsiderNum / 100})
+	users, err := client.SearchUsers(github.UserSearchQuery{Q: query, Sort: "followers", Order: "desc", PerPage: 100, Pages: options.ConsiderNum / 100})
 	if err != nil {
 		return GithubDataPieces{}, err
 	}
@@ -61,10 +61,10 @@ func GithubTop(options TopOptions) (GithubDataPieces, error) {
 	}
 
 	sort.Sort(data)
-	if len(data) < num_top {
-		num_top = len(data)
+	if len(data) < numTop {
+		numTop = len(data)
 	}
-	data = data[:num_top]
+	data = data[:numTop]
 
 	return data, nil
 }
@@ -88,63 +88,61 @@ func (slice GithubDataPieces) Swap(i, j int) {
 	slice[i], slice[j] = slice[j], slice[i]
 }
 
-type TopOptions struct {
+type Options struct {
 	Token       string
 	Locations   []string
 	Amount      int
 	ConsiderNum int
 }
 
-type TopOrganization struct {
+type Organization struct {
 	Name        string
 	MemberCount int
 }
 
-type TopOrganizations []TopOrganization
+type Organizations []Organization
 
-func (slice TopOrganizations) Len() int {
+func (slice Organizations) Len() int {
 	return len(slice)
 }
 
-func (slice TopOrganizations) Less(i, j int) bool {
+func (slice Organizations) Less(i, j int) bool {
 	return slice[i].MemberCount > slice[j].MemberCount
 }
 
-func (slice TopOrganizations) Swap(i, j int) {
+func (slice Organizations) Swap(i, j int) {
 	slice[i], slice[j] = slice[j], slice[i]
 }
 
-func (pieces GithubDataPieces) TopOrgs(count int) TopOrganizations {
-	orgs_map := make(map[string]int)
-	for _, piece := range pieces {
+func (slice GithubDataPieces) TopOrgs(count int) Organizations {
+	orgsMap := make(map[string]int)
+	for _, piece := range slice {
 		user := piece.User
-		user_orgs := user.Organizations
-		org_matches := companyLogin.FindStringSubmatch(strings.Trim(user.Company, " "))
-		if len(org_matches) > 0 {
-			org_login := companyLogin.FindStringSubmatch(strings.Trim(user.Company, " "))[1]
-			if len(org_login) > 0 && !contains(user_orgs, org_login) {
-				user_orgs = append(user_orgs, org_login)
+		userOrgs := user.Organizations
+		orgMatches := companyLogin.FindStringSubmatch(strings.Trim(user.Company, " "))
+		if len(orgMatches) > 0 {
+			orgLogin := companyLogin.FindStringSubmatch(strings.Trim(user.Company, " "))[1]
+			if len(orgLogin) > 0 && !contains(userOrgs, orgLogin) {
+				userOrgs = append(userOrgs, orgLogin)
 			}
 		}
 
-		for _, o := range user_orgs {
+		for _, o := range userOrgs {
 			org := strings.ToLower(o)
-			orgs_map[org] = orgs_map[org] + 1
+			orgsMap[org] = orgsMap[org] + 1
 		}
 	}
 
-	orgs := TopOrganizations{}
+	orgs := Organizations{}
 
-	for k, v := range orgs_map {
-		orgs = append(orgs, TopOrganization{Name: k, MemberCount: v})
+	for k, v := range orgsMap {
+		orgs = append(orgs, Organization{Name: k, MemberCount: v})
 	}
 	sort.Sort(orgs)
 	if len(orgs) > count {
 		return orgs[:count]
-	} else {
-		return orgs
 	}
-
+	return orgs
 }
 
 func contains(s []string, e string) bool {

@@ -37,7 +37,7 @@ func main() {
 		locations = Preset(*preset)
 	}
 
-	var format output.OutputFormat
+	var format output.Format
 
 	if *outputOpt == "plain" {
 		format = output.PlainOutput
@@ -49,7 +49,7 @@ func main() {
 		log.Fatal("Unrecognized output format: ", *outputOpt)
 	}
 
-	data, err := top.GithubTop(top.TopOptions{Token: *token, Locations: locations, Amount: *amount, ConsiderNum: *considerNum})
+	data, err := top.GithubTop(top.Options{Token: *token, Locations: locations, Amount: *amount, ConsiderNum: *considerNum})
 
 	if err != nil {
 		log.Fatal(err)
