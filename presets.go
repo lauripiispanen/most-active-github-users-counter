@@ -8,7 +8,7 @@ var PRESETS = map[string]PresetLocations{
 	"sweden":       PresetLocations{"sweden", "sverige", "stockholm", "malm%C3%B6", "uppsala", "g%C3%B6teborg", "gothenburg"},
 	"norway":       PresetLocations{"norway", "norge", "oslo", "bergen"},
 	"germany":      PresetLocations{"germany", "deutschland", "berlin", "frankfurt", "munich", "m%C3%BCnchen", "hamburg", "cologne", "k%C3%B6ln"},
-	"netherlands":  PresetLocations{"netherlands", "nederland", "amsterdam", "rotterdam", "hague", "utrecht", "holland", "delft"},
+	"netherlands":  PresetLocations{"netherlands", "the netherlands", "nederland", "amsterdam", "rotterdam", "hague", "utrecht", "holland", "delft"},
 	"ukraine":      PresetLocations{"ukraine", "kiev", "kyiv", "kharkiv", "dnipro", "odesa", "donetsk", "zaporizhia"},
 	"japan":        PresetLocations{"japan", "tokyo", "yokohama", "osaka", "nagoya", "sapporo", "kobe", "kyoto", "fukuoka", "kawasaki", "saitama", "hiroshima", "sendai"},
 	"russia":       PresetLocations{"russia", "moscow", "saint%2Bpetersburg", "novosibirsk", "yekaterinburg", "nizhny%2Bnovgorod", "samara", "omsk", "kazan", "chelyabinsk", "rostov-on-don", "ufa", "volgograd"},
