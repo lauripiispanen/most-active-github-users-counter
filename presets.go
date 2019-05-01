@@ -29,7 +29,7 @@ var PRESETS = map[string]PresetLocations{
 	"brazil":       PresetLocations{"brazil", "brasil", "s%C3%A3o%20paulo", "bras%C3%ADlia", "salvador", "fortaleza", "belo%20horizonte", "manaus", "curitiba", "recife", "porto%20alegre"},
 	"nigeria":      PresetLocations{"nigeria", "lagos", "kano", "ibadan", "benin%20city", "port%20harcourt", "jos", "ilorin"},
 	"bangladesh":   PresetLocations{"bangladesh", "dhaka", "chittagong", "khulna", "rajshahi", "barisal", "sylhet", "rangpur", "comilla", "gazipur"},
-	"mexico":       PresetLocations{"mexico", "mexico%20city", "guadalajara", "puebla", "tijuana", "mexicali"},
+	"mexico":       PresetLocations{"mexico", "mexico%20city", "guadalajara", "puebla", "tijuana", "mexicali", "monterrey", "hermosillo", "zapopan", "ciudad%20juarez", "chihuahua", "aguascalientes", "mx"},
 	"philippines":  PresetLocations{"philippines", "pilipinas", "quezon", "manila", "davao", "caloocan", "cebu", "zamboanga", "bohol", "pasig", "bacolod", "makati", "baguio"},
 	"luxembourg":   PresetLocations{"luxembourg", "esch-sur-alzette", "differdange", "dudelange", "ettelbruck", "diekirch", "wiltz", "echternach", "rumelange", "grevenmacher", "bertrange", "mamer", "capellen", "strassen", "diekirch"},
 	"egypt":        PresetLocations{"egypt", "cairo", "alexandria", "giza", "port%2Bsaid", "suez", "luxor", "el%2Bmahalla", "asyut", "al%2Bmansurah", "tanda"},
