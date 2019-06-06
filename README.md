@@ -8,15 +8,12 @@ Project is written on Go programming language, so you have to follow general rec
 
 To start to clone the repository to your $GOPATH folder.
 
-### Get GitHub token
+### Get GitHub Token
 
 For having an ability to run requests to the GitHub API you have to create personal token [here](https://github.com/settings/tokens) and grant `read:org` and `read:user` 
 
-### Parameters and Options
 
-Tools support several parameters for usage.
-
-### How to run, example
+### How to Run, Example
 
 ```
 go run *.go \
