@@ -62,7 +62,22 @@ var PRESETS = map[string]PresetLocations{
 	"sri lanka":    PresetLocations{"sri%2Blanka", "balangoda", "ratnapura", "colombo", "moratuwa", "negombo", "galle", "jaffna"},
 	"singapore":    PresetLocations{"singapore"},
 	"latvia":       PresetLocations{"latvia", "latvija", "riga", "r%C4%ABga", "kuldiga", "kuld%C4%ABga", "ventspils", "liepaja", "liep%C4%81ja", "daugavpils", "jelgava", "jurmala", "j%C5%ABrmala"},
-	"romania":      PresetLocations{"romania", "bucharest", "cluj", "iasi", "timisoara", "craiova", "brasov", "sibiu", "constanta", "oradea", "galati", "ploesti", "pitesti", "arad", "bacau"}}
+	"romania":      PresetLocations{"romania", "bucharest", "cluj", "iasi", "timisoara", "craiova", "brasov", "sibiu", "constanta", "oradea", "galati", "ploesti", "pitesti", "arad", "bacau"},
+	"belarus":		PresetLocations{"belarus", "minsk", "brest,belarus", "grodno", "gomel", "vitebsk", "mogilev", "slutsk", "borisov", "pinsk", "baranovichi", "bobruisk"}}
+
+	// location:pinsk - 13
+	// brest,belarus - 313
+	// grodno - 266
+	// location:gomel - 351
+	// location:vitebsk - 224
+	// location:mogilev - 103
+	// location:slutsk - 3
+	// location:borisov - 8
+	// location:baranovichi - 14
+	// location:bobruisk - 18
+	// location:minsk - 9430
+	// location:belarus - 9521
+
 
 func Preset(name string) []string {
 	return PRESETS[name]
