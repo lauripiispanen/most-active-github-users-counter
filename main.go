@@ -3,10 +3,11 @@ package main
 import (
 	"bufio"
 	"flag"
-	"github.com/lauripiispanen/most-active-github-users-counter/output"
-	"github.com/lauripiispanen/most-active-github-users-counter/top"
 	"log"
 	"os"
+
+	"github.com/lauripiispanen/most-active-github-users-counter/output"
+	"github.com/lauripiispanen/most-active-github-users-counter/top"
 )
 
 type arrayFlags []string
