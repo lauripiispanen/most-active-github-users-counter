@@ -1,19 +1,14 @@
+[Project homepage](https://commits.top/)
+
 # Most Active GitHub Users Counter
 
-This tool, written on golang, allows to fetch GitHub users from a specified location and sort them by the number of contributions.
+This CLI tool queries the GitHub GraphQL API for users and ranks them according to number of contributions. Several preset locations are provided.
 
-## Usage
+**GitHub Token**
 
-Project is written on Go programming language, so you have to follow general recommendations and guides about development using this language.
+In order to make requests against the GitHub API one needs an access token, which can be created [here](https://github.com/settings/tokens). The token needs `read:org` and `read:user` permissions.
 
-To start to clone the repository to your $GOPATH folder.
-
-### Get GitHub Token
-
-For having an ability to run requests to the GitHub API you have to create personal token [here](https://github.com/settings/tokens) and grant `read:org` and `read:user` 
-
-
-### How to Run, Example
+**Example usage (dev environment):**
 
 ```
 go run *.go \
@@ -24,3 +19,9 @@ go run *.go \
    --output csv \
    --file ./output.csv
 ```
+
+## Contribution
+
+Contributions are accepted. Please provide any input as pull request. As a hobby project, my time is limited, but PRs and issues are addressed regularly.
+
+*Please use the provided precommit hooks and run `go fmt`, `go vet` and `go lint` liberally.*
