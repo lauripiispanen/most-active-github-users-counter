@@ -69,7 +69,15 @@ var PRESETS = map[string]PresetLocations{
 	"saudi arabia": PresetLocations{"Saudi", "KSA", "Riyadh", "Mecca"},
 	"morocco":      PresetLocations{"morocco", "casablanca", "fez", "tangier", "marrakesh", "sal%E9", "meknes", "rabat", "oujda", "kenitra", "agadir", "tetouan", "temara", "safi", "mohammedia", "khouribga", "el%2Bjadida"},
 	"uzbekistan":   PresetLocations{"uzbekistan", "tashkent", "namangan", "samarkand", "andijan", "nukus", "bukhara", "qarshi", "fergana"},
-	"malaysia":     PresetLocations{"malaysia", "kuala%2Blumpur", "kajang", "klang", "subang", "penang", "ipoh", "selangor", "melaka", "johor", "sabah"}}
+	"malaysia":     PresetLocations{"malaysia", "kuala%2Blumpur", "kajang", "klang", "subang", "penang", "ipoh", "selangor", "melaka", "johor", "sabah"},
+	"afghanistan":  PresetLocations{"afghanistan", "kabul", "kandahar", "herat", "mazar-e-sharif", "jalalabad", "ghazni", "nangarhar"},
+	"venezuela":    PresetLocations{"venezuela", "caracas", "maracaibo", "barquisimeto", "guayana", "matur%C3%ADn", "zulia", "bolivar"},
+	"ghana":        PresetLocations{"ghana", "accra", "kumasi", "sekondi", "ashaiman", "sunyani", "tamale", "tema"},
+	"angola":       PresetLocations{"angola", "luanda", "huambo", "lobito", "benguela"},
+	"nepal":        PresetLocations{"nepal", "kathmandu", "pokhara", "lalitpur", "bharatpur", "birgunj", "biratnagar", "janakpur", "ghorahi"},
+	"yemen":        PresetLocations{"yemen", "sana%27a", "taiz", "aden", "mukalla", "ibb"},
+	"mozambique":   PresetLocations{"mozambique", "maputo", "matola", "nampula", "beira", "sofala", "chimoio", "tete", "quelimane"},
+	"ivory coast":  PresetLocations{"ivory", "abidjan", "bouak%C3%A9", "daloa", "yamoussoukro"}}
 
 func Preset(name string) []string {
 	return PRESETS[name]
