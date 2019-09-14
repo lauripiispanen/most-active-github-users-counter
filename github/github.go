@@ -3,13 +3,14 @@ package github
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/anaskhan96/soup"
-	"github.com/lauripiispanen/most-active-github-users-counter/net"
 	"log"
 	"net/http"
 	"regexp"
 	"strconv"
 	"strings"
+
+	"github.com/anaskhan96/soup"
+	"github.com/lauripiispanen/most-active-github-users-counter/net"
 )
 
 const root string = "https://api.github.com/"
