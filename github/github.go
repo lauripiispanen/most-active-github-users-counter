@@ -63,93 +63,102 @@ func (client HTTPGithubClient) User(login string) (User, error) {
 }
 
 func (client HTTPGithubClient) SearchUsers(query UserSearchQuery) ([]User, error) {
-	pages := 1
-	if query.Pages > 0 {
-		pages = query.Pages
-	}
-	if pages > 10 {
-		pages = 10
-	}
-
 	users := []User{}
 
-	currentPage := 1
 	totalCount := 0
-	previousCursor := ""
-	cursorQueryStr := ""
-	for currentPage <= pages {
-		if previousCursor != "" {
-			cursorQueryStr = fmt.Sprintf(", after: \\\"%s\\\"", previousCursor)
+	minFollowerCount := -1
+
+Pages:
+	for totalCount < query.MaxUsers {
+		previousCursor := ""
+		followerCountQueryStr := ""
+		if minFollowerCount >= 0 {
+			followerCountQueryStr = fmt.Sprintf(" followers:<%d", minFollowerCount)
 		}
-		graphQlString := fmt.Sprintf(`{ "query": "query {
-      search(type: USER, query:\"%s sort:%s-%s\", first: %d%s) {
-        edges {
-          node {
-            __typename
-            ... on User {
-              login,
-              avatarUrl,
-              name,
-              company,
-              organizations(first: 100) {
-                nodes {
-                  login
+		for currentPage := 1; currentPage <= 10; currentPage++ {
+			cursorQueryStr := ""
+			if previousCursor != "" {
+				cursorQueryStr = fmt.Sprintf(", after: \\\"%s\\\"", previousCursor)
+			}
+			graphQlString := fmt.Sprintf(`{ "query": "query {
+        search(type: USER, query:\"%s%s sort:%s-%s\", first: %d%s) {
+          edges {
+            node {
+              __typename
+              ... on User {
+                login,
+                avatarUrl,
+                name,
+                company,
+                organizations(first: 100) {
+                  nodes {
+                    login
+                  }
+                }
+                followers {
+                  totalCount
                 }
               }
-            }
-          },
-          cursor
+            },
+            cursor
+          }
         }
-      }
-    }" }`, query.Q, query.Sort, query.Order, query.PerPage, cursorQueryStr)
+      }" }`, query.Q, followerCountQueryStr, query.Sort, query.Order, 100, cursorQueryStr)
 
-		re := regexp.MustCompile(`\r?\n`)
-		graphQlString = re.ReplaceAllString(graphQlString, " ")
+			re := regexp.MustCompile(`\r?\n`)
+			graphQlString = re.ReplaceAllString(graphQlString, " ")
 
-		body, err := client.Request("https://api.github.com/graphql", graphQlString)
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		var response interface{}
-		if err := json.Unmarshal(body, &response); err != nil {
-			log.Fatal(err)
-		}
-		rootNode := response.(map[string]interface{})
-		if val, ok := rootNode["errors"]; ok {
-			log.Fatalf("%s", val)
-		}
-		dataNode := rootNode["data"].(map[string]interface{})
-		searchNode := dataNode["search"].(map[string]interface{})
-		edgeNodes := searchNode["edges"].([]interface{})
-		totalCount += len(edgeNodes)
-
-	Edges:
-		for _, edge := range edgeNodes {
-			edgeNode := edge.(map[string]interface{})
-			userNode := edgeNode["node"].(map[string]interface{})
-			typename := userNode["__typename"].(string)
-			if typename != "User" {
-				continue Edges
-			}
-			login := userNode["login"].(string)
-			avatarURL := userNode["avatarUrl"].(string)
-			name := strPropOrEmpty(userNode, "name")
-			company := strPropOrEmpty(userNode, "company")
-			organizations := []string{}
-
-			orgNodes := userNode["organizations"].(map[string]interface{})["nodes"].([]interface{})
-			for _, orgNode := range orgNodes {
-
-				organizations = append(organizations, orgNode.(map[string]interface{})["login"].(string))
+			body, err := client.Request("https://api.github.com/graphql", graphQlString)
+			if err != nil {
+				log.Fatal(err)
 			}
 
-			user := User{Login: login, AvatarURL: avatarURL, Name: name, Company: company, Organizations: organizations}
-			users = append(users, user)
+			var response interface{}
+			if err := json.Unmarshal(body, &response); err != nil {
+				log.Fatal(err)
+			}
+			rootNode := response.(map[string]interface{})
+			if val, ok := rootNode["errors"]; ok {
+				log.Fatalf("%s", val)
+			}
+			dataNode := rootNode["data"].(map[string]interface{})
+			searchNode := dataNode["search"].(map[string]interface{})
+			edgeNodes := searchNode["edges"].([]interface{})
 
-			previousCursor = edgeNode["cursor"].(string)
+			if len(edgeNodes) == 0 {
+				break Pages
+			}
+			totalCount += len(edgeNodes)
+
+		Edges:
+			for _, edge := range edgeNodes {
+				edgeNode := edge.(map[string]interface{})
+				userNode := edgeNode["node"].(map[string]interface{})
+				typename := userNode["__typename"].(string)
+				if typename != "User" {
+					continue Edges
+				}
+				login := userNode["login"].(string)
+				avatarURL := userNode["avatarUrl"].(string)
+				name := strPropOrEmpty(userNode, "name")
+				company := strPropOrEmpty(userNode, "company")
+				organizations := []string{}
+
+				orgNodes := userNode["organizations"].(map[string]interface{})["nodes"].([]interface{})
+				for _, orgNode := range orgNodes {
+
+					organizations = append(organizations, orgNode.(map[string]interface{})["login"].(string))
+				}
+
+				followerCount := userNode["followers"].(map[string]interface{})["totalCount"].(float64)
+
+				user := User{Login: login, AvatarURL: avatarURL, Name: name, Company: company, Organizations: organizations, FollowerCount: followerCount}
+				users = append(users, user)
+
+				previousCursor = edgeNode["cursor"].(string)
+				minFollowerCount = int(followerCount)
+			}
 		}
-		currentPage++
 	}
 
 	return users, nil
@@ -222,12 +231,12 @@ type User struct {
 	Name          string
 	Company       string
 	Organizations []string
+	FollowerCount float64
 }
 
 type UserSearchQuery struct {
-	Q       string
-	Sort    string
-	Order   string
-	PerPage int
-	Pages   int
+	Q        string
+	Sort     string
+	Order    string
+	MaxUsers int
 }

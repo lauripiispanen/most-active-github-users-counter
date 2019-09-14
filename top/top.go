@@ -3,13 +3,14 @@ package top
 import (
 	"errors"
 	"fmt"
-	"github.com/lauripiispanen/most-active-github-users-counter/github"
-	"github.com/lauripiispanen/most-active-github-users-counter/net"
 	"log"
 	"regexp"
 	"sort"
 	"strings"
 	"time"
+
+	"github.com/lauripiispanen/most-active-github-users-counter/github"
+	"github.com/lauripiispanen/most-active-github-users-counter/net"
 )
 
 var companyLogin = regexp.MustCompile(`^\@([a-zA-Z0-9]+)$`)
@@ -31,7 +32,7 @@ func GithubTop(options Options) (GithubDataPieces, error) {
 	}
 
 	var client = github.NewGithubClient(net.TokenAuth(token))
-	users, err := client.SearchUsers(github.UserSearchQuery{Q: query, Sort: "followers", Order: "desc", PerPage: 100, Pages: options.ConsiderNum / 100})
+	users, err := client.SearchUsers(github.UserSearchQuery{Q: query, Sort: "followers", Order: "desc", MaxUsers: options.ConsiderNum})
 	if err != nil {
 		return GithubDataPieces{}, err
 	}
