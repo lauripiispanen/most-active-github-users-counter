@@ -123,9 +123,15 @@ func (client HTTPGithubClient) SearchUsers(query UserSearchQuery) ([]User, error
 		searchNode := dataNode["search"].(map[string]interface{})
 		edgeNodes := searchNode["edges"].([]interface{})
 		totalCount += len(edgeNodes)
+
+	Edges:
 		for _, edge := range edgeNodes {
 			edgeNode := edge.(map[string]interface{})
 			userNode := edgeNode["node"].(map[string]interface{})
+			typename := userNode["__typename"].(string)
+			if typename != "User" {
+				continue Edges
+			}
 			login := userNode["login"].(string)
 			avatarURL := userNode["avatarUrl"].(string)
 			name := strPropOrEmpty(userNode, "name")
