@@ -6,10 +6,8 @@ import (
 	"log"
 	"net/http"
 	"regexp"
-	"strconv"
 	"strings"
 
-	"github.com/anaskhan96/soup"
 	"github.com/lauripiispanen/most-active-github-users-counter/net"
 )
 
@@ -98,6 +96,11 @@ Pages:
                 followers {
                   totalCount
                 }
+                contributionsCollection {
+                  contributionCalendar {
+                    totalContributions
+                  }
+                }
               }
             },
             cursor
@@ -151,8 +154,17 @@ Pages:
 				}
 
 				followerCount := userNode["followers"].(map[string]interface{})["totalCount"].(float64)
+				contributionCalendar := userNode["contributionsCollection"].(map[string]interface{})["contributionCalendar"]
+				contributionCount := int(contributionCalendar.(map[string]interface{})["totalContributions"].(float64))
 
-				user := User{Login: login, AvatarURL: avatarURL, Name: name, Company: company, Organizations: organizations, FollowerCount: followerCount}
+				user := User{
+					Login:             login,
+					AvatarURL:         avatarURL,
+					Name:              name,
+					Company:           company,
+					Organizations:     organizations,
+					FollowerCount:     followerCount,
+					ContributionCount: contributionCount}
 				users = append(users, user)
 
 				previousCursor = edgeNode["cursor"].(string)
@@ -172,27 +184,6 @@ func strPropOrEmpty(obj map[string]interface{}, prop string) string {
 		return ""
 	}
 
-}
-
-func (client HTTPGithubClient) NumContributions(login string) (int, error) {
-	body, err := client.Request(fmt.Sprintf("https://github.com/users/%s/contributions", login), "")
-	if err != nil {
-		log.Fatalf("error requesting contributions for user %+v: %+v", login, err)
-		return -1, err
-	}
-	doc := soup.HTMLParse(string(body))
-	dayNodes := doc.FindAll("rect", "class", "day")
-
-	count := 0
-	for _, dayNode := range dayNodes {
-		i, err := strconv.Atoi(dayNode.Attrs()["data-count"])
-		if err != nil {
-			return -1, err
-		}
-		count += int(i)
-	}
-
-	return count, err
 }
 
 func (client HTTPGithubClient) Organizations(login string) ([]string, error) {
@@ -226,12 +217,13 @@ func NewGithubClient(wrappers ...net.Wrapper) HTTPGithubClient {
 }
 
 type User struct {
-	Login         string
-	AvatarURL     string
-	Name          string
-	Company       string
-	Organizations []string
-	FollowerCount float64
+	Login             string
+	AvatarURL         string
+	Name              string
+	Company           string
+	Organizations     []string
+	FollowerCount     float64
+	ContributionCount int
 }
 
 type UserSearchQuery struct {

@@ -3,11 +3,9 @@ package top
 import (
 	"errors"
 	"fmt"
-	"log"
 	"regexp"
 	"sort"
 	"strings"
-	"time"
 
 	"github.com/lauripiispanen/most-active-github-users-counter/github"
 	"github.com/lauripiispanen/most-active-github-users-counter/net"
@@ -15,10 +13,10 @@ import (
 
 var companyLogin = regexp.MustCompile(`^\@([a-zA-Z0-9]+)$`)
 
-func GithubTop(options Options) (GithubDataPieces, error) {
+func GithubTop(options Options) (GithubUsers, error) {
 	var token = options.Token
 	if token == "" {
-		return GithubDataPieces{}, errors.New("Missing GITHUB token")
+		return GithubUsers{}, errors.New("Missing GITHUB token")
 	}
 
 	var numTop = options.Amount
@@ -34,58 +32,29 @@ func GithubTop(options Options) (GithubDataPieces, error) {
 	var client = github.NewGithubClient(net.TokenAuth(token))
 	users, err := client.SearchUsers(github.UserSearchQuery{Q: query, Sort: "followers", Order: "desc", MaxUsers: options.ConsiderNum})
 	if err != nil {
-		return GithubDataPieces{}, err
+		return GithubUsers{}, err
 	}
 
-	data := GithubDataPieces{}
-
-	pieces := make(chan GithubDataPiece)
-	throttle := time.Tick(time.Second / 20)
-
-	for _, user := range users {
-		go func(user github.User) {
-			count, err := client.NumContributions(user.Login)
-			if err != nil {
-				log.Fatal(err)
-			}
-			pieces <- GithubDataPiece{User: user, Contributions: count}
-		}(user)
-
-		<-throttle
+	sort.Sort(GithubUsers(users))
+	if len(users) < numTop {
+		numTop = len(users)
 	}
+	users = users[:numTop]
 
-	for piece := range pieces {
-		data = append(data, piece)
-		if len(data) >= len(users) {
-			close(pieces)
-		}
-	}
-
-	sort.Sort(data)
-	if len(data) < numTop {
-		numTop = len(data)
-	}
-	data = data[:numTop]
-
-	return data, nil
+	return users, nil
 }
 
-type GithubDataPiece struct {
-	User          github.User
-	Contributions int
-}
+type GithubUsers []github.User
 
-type GithubDataPieces []GithubDataPiece
-
-func (slice GithubDataPieces) Len() int {
+func (slice GithubUsers) Len() int {
 	return len(slice)
 }
 
-func (slice GithubDataPieces) Less(i, j int) bool {
-	return slice[i].Contributions > slice[j].Contributions
+func (slice GithubUsers) Less(i, j int) bool {
+	return slice[i].ContributionCount > slice[j].ContributionCount
 }
 
-func (slice GithubDataPieces) Swap(i, j int) {
+func (slice GithubUsers) Swap(i, j int) {
 	slice[i], slice[j] = slice[j], slice[i]
 }
 
@@ -115,10 +84,9 @@ func (slice Organizations) Swap(i, j int) {
 	slice[i], slice[j] = slice[j], slice[i]
 }
 
-func (slice GithubDataPieces) TopOrgs(count int) Organizations {
+func (slice GithubUsers) TopOrgs(count int) Organizations {
 	orgsMap := make(map[string]int)
-	for _, piece := range slice {
-		user := piece.User
+	for _, user := range slice {
 		userOrgs := user.Organizations
 		orgMatches := companyLogin.FindStringSubmatch(strings.Trim(user.Company, " "))
 		if len(orgMatches) > 0 {

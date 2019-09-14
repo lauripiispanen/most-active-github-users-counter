@@ -3,39 +3,40 @@ package output
 import (
 	"encoding/csv"
 	"fmt"
-	"github.com/lauripiispanen/most-active-github-users-counter/top"
 	"io"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/lauripiispanen/most-active-github-users-counter/top"
 )
 
-type Format func(data top.GithubDataPieces, writer io.Writer) error
+type Format func(users top.GithubUsers, writer io.Writer) error
 
-func PlainOutput(data top.GithubDataPieces, writer io.Writer) error {
+func PlainOutput(users top.GithubUsers, writer io.Writer) error {
 	fmt.Fprintln(writer, "USERS\n--------")
-	for i, piece := range data {
-		fmt.Fprintf(writer, "#%+v: %+v (%+v):%+v (%+v) %+v\n", i+1, piece.User.Name, piece.User.Login, piece.Contributions, piece.User.Company, strings.Join(piece.User.Organizations, ","))
+	for i, user := range users {
+		fmt.Fprintf(writer, "#%+v: %+v (%+v):%+v (%+v) %+v\n", i+1, user.Name, user.Login, user.ContributionCount, user.Company, strings.Join(user.Organizations, ","))
 	}
 	fmt.Fprintln(writer, "\nORGANIZATIONS\n--------")
-	for i, org := range data.TopOrgs(10) {
+	for i, org := range users.TopOrgs(10) {
 		fmt.Fprintf(writer, "#%+v: %+v (%+v)\n", i+1, org.Name, org.MemberCount)
 	}
 	return nil
 }
 
-func CsvOutput(data top.GithubDataPieces, writer io.Writer) error {
+func CsvOutput(users top.GithubUsers, writer io.Writer) error {
 	w := csv.NewWriter(writer)
 	if err := w.Write([]string{"rank", "name", "login", "contributions", "company", "organizations"}); err != nil {
 		return err
 	}
-	for i, piece := range data {
+	for i, user := range users {
 		rank := strconv.Itoa(i + 1)
-		name := piece.User.Name
-		login := piece.User.Login
-		contribs := strconv.Itoa(piece.Contributions)
-		orgs := strings.Join(piece.User.Organizations, ",")
-		company := piece.User.Company
+		name := user.Name
+		login := user.Login
+		contribs := strconv.Itoa(user.ContributionCount)
+		orgs := strings.Join(user.Organizations, ",")
+		company := user.Company
 		if err := w.Write([]string{rank, name, login, contribs, company, orgs}); err != nil {
 			return err
 		}
@@ -44,9 +45,9 @@ func CsvOutput(data top.GithubDataPieces, writer io.Writer) error {
 	return nil
 }
 
-func YamlOutput(data top.GithubDataPieces, writer io.Writer) error {
+func YamlOutput(users top.GithubUsers, writer io.Writer) error {
 	fmt.Fprintln(writer, "users:")
-	for i, piece := range data {
+	for i, user := range users {
 		fmt.Fprintf(
 			writer,
 			`
@@ -59,16 +60,16 @@ func YamlOutput(data top.GithubDataPieces, writer io.Writer) error {
     organizations: '%+v'
 `,
 			i+1,
-			strings.Replace(piece.User.Name, "'", "''", -1),
-			strings.Replace(piece.User.Login, "'", "''", -1),
-			piece.User.AvatarURL,
-			piece.Contributions,
-			strings.Replace(piece.User.Company, "'", "''", -1),
-			strings.Replace(strings.Join(piece.User.Organizations, ","), "'", "''", -1))
+			strings.Replace(user.Name, "'", "''", -1),
+			strings.Replace(user.Login, "'", "''", -1),
+			user.AvatarURL,
+			user.ContributionCount,
+			strings.Replace(user.Company, "'", "''", -1),
+			strings.Replace(strings.Join(user.Organizations, ","), "'", "''", -1))
 	}
 	fmt.Fprintln(writer, "\norganizations:")
 
-	for i, org := range data.TopOrgs(10) {
+	for i, org := range users.TopOrgs(10) {
 		fmt.Fprintf(
 			writer,
 			`
