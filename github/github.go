@@ -66,7 +66,7 @@ func (client HTTPGithubClient) SearchUsers(query UserSearchQuery) ([]User, error
 	totalCount := 0
 	minFollowerCount := -1
 	maxPerQuery := 1000
-	perPage := 100
+	perPage := 10
 
 Pages:
 	for totalCount < query.MaxUsers {
@@ -102,6 +102,7 @@ Pages:
                   contributionCalendar {
                     totalContributions
                   }
+                  restrictedContributionsCount
                 }
               }
             },
@@ -155,18 +156,21 @@ Pages:
 					organizations = append(organizations, orgNode.(map[string]interface{})["login"].(string))
 				}
 
-				followerCount := userNode["followers"].(map[string]interface{})["totalCount"].(float64)
-				contributionCalendar := userNode["contributionsCollection"].(map[string]interface{})["contributionCalendar"]
-				contributionCount := int(contributionCalendar.(map[string]interface{})["totalContributions"].(float64))
+				followerCount := int(userNode["followers"].(map[string]interface{})["totalCount"].(float64))
+				contributionsCollection := userNode["contributionsCollection"].(map[string]interface{})
+				contributionCount := int(contributionsCollection["contributionCalendar"].(map[string]interface{})["totalContributions"].(float64))
+				privateContributionCount := int(contributionsCollection["restrictedContributionsCount"].(float64))
 
 				user := User{
-					Login:             login,
-					AvatarURL:         avatarURL,
-					Name:              name,
-					Company:           company,
-					Organizations:     organizations,
-					FollowerCount:     followerCount,
-					ContributionCount: contributionCount}
+					Login:                    login,
+					AvatarURL:                avatarURL,
+					Name:                     name,
+					Company:                  company,
+					Organizations:            organizations,
+					FollowerCount:            followerCount,
+					ContributionCount:        contributionCount,
+					PublicContributionCount:  (contributionCount - privateContributionCount),
+					PrivateContributionCount: privateContributionCount}
 				users = append(users, user)
 
 				previousCursor = edgeNode["cursor"].(string)
@@ -219,13 +223,15 @@ func NewGithubClient(wrappers ...net.Wrapper) HTTPGithubClient {
 }
 
 type User struct {
-	Login             string
-	AvatarURL         string
-	Name              string
-	Company           string
-	Organizations     []string
-	FollowerCount     float64
-	ContributionCount int
+	Login                    string
+	AvatarURL                string
+	Name                     string
+	Company                  string
+	Organizations            []string
+	FollowerCount            int
+	ContributionCount        int
+	PublicContributionCount  int
+	PrivateContributionCount int
 }
 
 type UserSearchQuery struct {
