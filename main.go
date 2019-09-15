@@ -3,10 +3,11 @@ package main
 import (
 	"bufio"
 	"flag"
-	"github.com/lauripiispanen/most-active-github-users-counter/output"
-	"github.com/lauripiispanen/most-active-github-users-counter/top"
 	"log"
 	"os"
+
+	"github.com/lauripiispanen/most-active-github-users-counter/output"
+	"github.com/lauripiispanen/most-active-github-users-counter/top"
 )
 
 type arrayFlags []string
@@ -49,7 +50,8 @@ func main() {
 		log.Fatal("Unrecognized output format: ", *outputOpt)
 	}
 
-	data, err := top.GithubTop(top.Options{Token: *token, Locations: locations, Amount: *amount, ConsiderNum: *considerNum})
+	opts := top.Options{Token: *token, Locations: locations, Amount: *amount, ConsiderNum: *considerNum}
+	data, err := top.GithubTop(opts)
 
 	if err != nil {
 		log.Fatal(err)
@@ -67,7 +69,7 @@ func main() {
 		writer = bufio.NewWriter(os.Stdout)
 	}
 
-	err = format(data, writer)
+	err = format(data, writer, opts)
 	if err != nil {
 		log.Fatal(err)
 	}
