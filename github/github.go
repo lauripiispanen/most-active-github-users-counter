@@ -65,6 +65,8 @@ func (client HTTPGithubClient) SearchUsers(query UserSearchQuery) ([]User, error
 
 	totalCount := 0
 	minFollowerCount := -1
+	maxPerQuery := 1000
+	perPage := 100
 
 Pages:
 	for totalCount < query.MaxUsers {
@@ -73,7 +75,7 @@ Pages:
 		if minFollowerCount >= 0 {
 			followerCountQueryStr = fmt.Sprintf(" followers:<%d", minFollowerCount)
 		}
-		for currentPage := 1; currentPage <= 10; currentPage++ {
+		for currentPage := 1; currentPage <= (maxPerQuery / perPage); currentPage++ {
 			cursorQueryStr := ""
 			if previousCursor != "" {
 				cursorQueryStr = fmt.Sprintf(", after: \\\"%s\\\"", previousCursor)
@@ -106,7 +108,7 @@ Pages:
             cursor
           }
         }
-      }" }`, query.Q, followerCountQueryStr, query.Sort, query.Order, 100, cursorQueryStr)
+      }" }`, query.Q, followerCountQueryStr, query.Sort, query.Order, perPage, cursorQueryStr)
 
 			re := regexp.MustCompile(`\r?\n`)
 			graphQlString = re.ReplaceAllString(graphQlString, " ")
