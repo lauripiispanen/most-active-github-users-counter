@@ -59,7 +59,7 @@ var PRESETS = map[string]PresetLocations{
 	"albania":      PresetLocations{"albania", "tirana", "durres", "vlore", "elbasan", "shkoder"},
 	"uganda":       PresetLocations{"uganda", "kampala", "mbarara", "mukono", "jinja", "arua", "gulu", "masaka"},
 	"zambia":       PresetLocations{"zambia", "lusaka", "kitwe", "ndola"},
-	"sri lanka":    PresetLocations{"sri%2Blanka", "balangoda", "ratnapura", "colombo", "moratuwa", "negombo", "galle", "jaffna"},
+	"sri lanka":    PresetLocations{"sri%2Blanka", "balangoda", "ratnapura", "colombo", "moratuwa", "negombo", "galle", "jaffna", "gampaha", "matara", "kandy", "peradeniya"},
 	"singapore":    PresetLocations{"singapore"},
 	"latvia":       PresetLocations{"latvia", "latvija", "riga", "r%C4%ABga", "kuldiga", "kuld%C4%ABga", "ventspils", "liepaja", "liep%C4%81ja", "daugavpils", "jelgava", "jurmala", "j%C5%ABrmala"},
 	"romania":      PresetLocations{"romania", "bucharest", "cluj", "iasi", "timisoara", "craiova", "brasov", "sibiu", "constanta", "oradea", "galati", "ploesti", "pitesti", "arad", "bacau"},
