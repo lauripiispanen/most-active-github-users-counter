@@ -78,7 +78,7 @@ func YamlOutput(users GithubUserList, writer io.Writer, options top.Options) err
 	}
 
 	topPublic := users.TopPublic(options.Amount)
-	fmt.Fprintln(writer, "public_users:")
+	fmt.Fprintln(writer, "users:")
 	outputUsers(topPublic, true)
 
 	topPrivate := users.TopPrivate(options.Amount)
@@ -100,7 +100,7 @@ func YamlOutput(users GithubUserList, writer io.Writer, options top.Options) err
 		}
 	}
 
-	fmt.Fprintln(writer, "\npublic_organizations:")
+	fmt.Fprintln(writer, "\norganizations:")
 	outputOrganizations(topPublic.TopOrgs(10))
 	fmt.Fprintln(writer, "\nprivate_organizations:")
 	outputOrganizations(topPrivate.TopOrgs(10))
