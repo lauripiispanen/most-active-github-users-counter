@@ -36,7 +36,7 @@ var PRESETS = map[string]PresetLocations{
 	"ethiopia":     PresetLocations{"ethiopia", "addis%2Bababa", "gondar", "adama", "hawassa", "bahir%2Bdar"},
 	"vietnam":      PresetLocations{"vietnam", "viet%2Bnam", "ho%2Bchi%2Bminh", "hanoi", "ha%2Bnoi", "hai%2Bphong", "da%2Bnang", "can%2Btho", "bien%2Bhoa", "nha%Btrang", "vinh"},
 	"iran":         PresetLocations{"iran", "tehran", "mashhad", "isfahan", "esfahan", "karaj", "shiraz", "tabriz", "qom", "ahvaz", "ahwaz", "kermanshah", "urmia", "rasht", "kerman"},
-	"congo":        PresetLocations{"congo", "drc", "kinshasa", "lubumbashi", "bukavu", "kananga", "goma", "kisangani"},
+	"congo":        PresetLocations{"congo", "drc", "kinshasa", "lubumbashi", "bukavu", "kananga", "goma"},
 	"turkey":       PresetLocations{"turkey", "turkiye", "istanbul", "ankara", "izmir", "bursa", "adana", "gaziantep", "konya", "antalya", "kayseri", "mersin", "eskisehir", "samsun", "denizli", "malatya"},
 	"thailand":     PresetLocations{"thailand", "bangkok", "nonthaburi", "nakhon", "phuket", "pattaya", "chiang%2Bmai"},
 	"south africa": PresetLocations{"south%2Bafrica", "south%2Bafrica", "johannesburg", "cape%2Btown", "rsa", "durban", "port%2Belizabeth", "pretoria", "nelspruit"},
