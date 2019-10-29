@@ -66,7 +66,7 @@ func (client HTTPGithubClient) SearchUsers(query UserSearchQuery) ([]User, error
 	totalCount := 0
 	minFollowerCount := -1
 	maxPerQuery := 1000
-	perPage := 10
+	perPage := 5
 
 Pages:
 	for totalCount < query.MaxUsers {
