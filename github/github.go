@@ -60,7 +60,7 @@ func (client HTTPGithubClient) User(login string) (User, error) {
 	return user, nil
 }
 
-func (client HTTPGithubClient) SearchUsers(query UserSearchQuery) ([]User, error) {
+func (client HTTPGithubClient) SearchUsers(query UserSearchQuery) (GithubSearchResults, error) {
 	users := []User{}
 	userLogins := map[string]bool{}
 
@@ -68,6 +68,7 @@ func (client HTTPGithubClient) SearchUsers(query UserSearchQuery) ([]User, error
 	minFollowerCount := -1
 	maxPerQuery := 1000
 	perPage := 5
+	totalUsersCount := 0
 
 Pages:
 	for totalCount < query.MaxUsers {
@@ -83,6 +84,7 @@ Pages:
 			}
 			graphQlString := fmt.Sprintf(`{ "query": "query {
         search(type: USER, query:\"%s%s sort:%s-%s\", first: %d%s) {
+          userCount
           edges {
             node {
               __typename
@@ -130,6 +132,7 @@ Pages:
 			}
 			dataNode := rootNode["data"].(map[string]interface{})
 			searchNode := dataNode["search"].(map[string]interface{})
+			totalUsersCount = int(searchNode["userCount"].(float64))
 			edgeNodes := searchNode["edges"].([]interface{})
 
 			if len(edgeNodes) == 0 {
@@ -184,7 +187,10 @@ Pages:
 		}
 	}
 
-	return users, nil
+	return GithubSearchResults{
+		Users:                users,
+		MinimumFollowerCount: minFollowerCount,
+		TotalUserCount:       totalUsersCount}, nil
 }
 
 func strPropOrEmpty(obj map[string]interface{}, prop string) string {
@@ -244,4 +250,10 @@ type UserSearchQuery struct {
 	Sort     string
 	Order    string
 	MaxUsers int
+}
+
+type GithubSearchResults struct {
+	Users                []User
+	MinimumFollowerCount int
+	TotalUserCount       int
 }

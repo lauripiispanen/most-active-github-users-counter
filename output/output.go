@@ -15,9 +15,10 @@ import (
 	"github.com/lauripiispanen/most-active-github-users-counter/top"
 )
 
-type Format func(users GithubUserList, writer io.Writer, options top.Options) error
+type Format func(results github.GithubSearchResults, writer io.Writer, options top.Options) error
 
-func PlainOutput(users GithubUserList, writer io.Writer, options top.Options) error {
+func PlainOutput(results github.GithubSearchResults, writer io.Writer, options top.Options) error {
+	users := GithubUserList(results.Users)
 	fmt.Fprintln(writer, "USERS\n--------")
 	for i, user := range users {
 		fmt.Fprintf(writer, "#%+v: %+v (%+v):%+v (%+v) %+v\n", i+1, user.Name, user.Login, user.ContributionCount, user.Company, strings.Join(user.Organizations, ","))
@@ -29,7 +30,8 @@ func PlainOutput(users GithubUserList, writer io.Writer, options top.Options) er
 	return nil
 }
 
-func CsvOutput(users GithubUserList, writer io.Writer, options top.Options) error {
+func CsvOutput(results github.GithubSearchResults, writer io.Writer, options top.Options) error {
+	users := GithubUserList(results.Users)
 	w := csv.NewWriter(writer)
 	if err := w.Write([]string{"rank", "name", "login", "contributions", "company", "organizations"}); err != nil {
 		return err
@@ -49,7 +51,8 @@ func CsvOutput(users GithubUserList, writer io.Writer, options top.Options) erro
 	return nil
 }
 
-func YamlOutput(users GithubUserList, writer io.Writer, options top.Options) error {
+func YamlOutput(results github.GithubSearchResults, writer io.Writer, options top.Options) error {
+	users := GithubUserList(results.Users)
 	outputUsers := func(user []github.User, public_only bool) {
 		for i, u := range user {
 			contributionCount := u.ContributionCount
@@ -106,7 +109,8 @@ func YamlOutput(users GithubUserList, writer io.Writer, options top.Options) err
 	outputOrganizations(topPrivate.TopOrgs(10))
 
 	fmt.Fprintf(writer, "generated: %+v\n", time.Now())
-	fmt.Fprintf(writer, "min_followers_required: %+v\n", users.MinFollowers())
+	fmt.Fprintf(writer, "min_followers_required: %+v\n", results.MinimumFollowerCount)
+	fmt.Fprintf(writer, "total_user_count: %+v\n", results.TotalUserCount)
 
 	return nil
 }
