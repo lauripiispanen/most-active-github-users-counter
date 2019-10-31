@@ -84,7 +84,22 @@ var PRESETS = map[string]PresetLocations{
 	"burkina faso": PresetLocations{"burkina+faso", "Ouagadougou", "Bobo-Dioulasso", "Koudougou", "Banfora", "Ouahigouya", "Pouytenga", "Kaya", "Tenkodogo", "Fada%2BN%27gourma", "Hound%C3%A9"},
 	"mali":         PresetLocations{"mali", "bamako", "sikasso", "kalabancoro", "koutiala", "s%C3%A9gou", "kayes", "kati", "mopti", "niono"},
 	"malawi":       PresetLocations{"malawi", "Lilongwe", "Blantyre", "Mzuzu", "Zomba", "Karonga", "Kasungu", "Mangochi", "Salima", "Liwonde", "Balaka"},
-	"chile":        PresetLocations{"chile", "Santiago", "Valpara%C3%ADso", "Concepci%C3%B3n", "La%2BSerena", "Antofagasta", "Temuco", "Rancagua", "Talca", "Arica", "Chill%C3%A1n"}}
+	"chile":        PresetLocations{"chile", "Santiago", "Valpara%C3%ADso", "Concepci%C3%B3n", "La%2BSerena", "Antofagasta", "Temuco", "Rancagua", "Talca", "Arica", "Chill%C3%A1n"},
+	"kazakhstan":   PresetLocations{"kazakhstan", "Almaty", "Shymkent", "Karagandy", "Taraz", "Nur-Sultan", "Pavlodar", "Oskemen", "Semey"},
+	"guatemala":    PresetLocations{"Guatemala", "mixco", "villa%2Bnueva", "petapa", "Quetzaltenango"},
+	"ecuador":      PresetLocations{"ecuador", "Guayaquil", "Quito", "Cuenca", "Machala"},
+	"syria":        PresetLocations{"syria", "aleppo", "homs", "latakia", "hama", "raqqa"},
+	"cambodia":     PresetLocations{"cambodia", "phnom", "battambang", "siem%2Breap", "kampong"},
+	"senegal":      PresetLocations{"senegal", "dakar", "touba", "thies", "rufisque"},
+	"chad":         PresetLocations{"chad", "tchad", "n'djamena", "moundou"},
+	"somalia":      PresetLocations{"somalia", "mogadishu", "hargeisa", "bosaso", "borama"},
+	"zimbabwe":     PresetLocations{"zimbabwe", "harare", "bulawayo", "mutare", "gweru", "kwekwe"},
+	"guinea":       PresetLocations{"conakry"},
+	"benin":        PresetLocations{"benin", "cotonou", "porto-novo", "abomey"},
+	"haiti":        PresetLocations{"haiti", "port-au-prince", "cap-haitien", "carrefour", "delmas", "petion-ville"},
+	"cuba":         PresetLocations{"cuba", "havana", "santiago%2Bde%2Bcuba", "camaguey", "holguin", "guantanamo", "bayamo"},
+	"bolivia":      PresetLocations{"bolivia", "santa%2Bcruz%2Bde%2Bla%2Bsierra", "el%2Balto", "la%2Bpaz", "cochabamba", "oruro", "sucre"},
+	"tunisia":      PresetLocations{"tunisia", "tunis", "sfax", "sousse", "kairouan", "ariana", "gabes", "bizerte"}}
 
 func Preset(name string) []string {
 	return PRESETS[name]
