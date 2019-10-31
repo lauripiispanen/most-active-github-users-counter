@@ -62,6 +62,7 @@ func (client HTTPGithubClient) User(login string) (User, error) {
 
 func (client HTTPGithubClient) SearchUsers(query UserSearchQuery) ([]User, error) {
 	users := []User{}
+	userLogins := map[string]bool{}
 
 	totalCount := 0
 	minFollowerCount := -1
@@ -171,7 +172,11 @@ Pages:
 					ContributionCount:        contributionCount,
 					PublicContributionCount:  (contributionCount - privateContributionCount),
 					PrivateContributionCount: privateContributionCount}
-				users = append(users, user)
+
+				if !userLogins[login] {
+					userLogins[login] = true
+					users = append(users, user)
+				}
 
 				previousCursor = edgeNode["cursor"].(string)
 				minFollowerCount = int(followerCount)
