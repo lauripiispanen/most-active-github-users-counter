@@ -18,7 +18,7 @@ var PRESETS = map[string]PresetLocations{
 	"france":             PresetLocations{"france", "paris", "marseille", "lyon", "toulouse", "nice", "nantes", "strasbourg", "montpellier", "bordeaux", "lille", "rennes", "reims"},
 	"spain":              PresetLocations{"spain", "españa", "madrid", "barcelona", "valencia", "seville", "sevilla", "zaragoza", "malaga", "murcia", "palma", "bilbao", "alicante", "cordoba"},
 	"italy":              PresetLocations{"italy", "italia", "rome", "roma", "milan", "naples", "napoli", "turin", "torino", "palermo", "genoa", "genova", "bologna", "florence", "firenze", "bari", "catania", "venice", "verona"},
-	"uk":                 PresetLocations{"uk", "london", "birmingham", "leeds", "glasgow", "sheffield", "bradford", "manchester", "edinburgh", "liverpool", "bristol", "cardiff", "belfast", "leicester", "wakefield", "coventry", "nottingham", "newcastle"},
+	"uk":                 PresetLocations{"uk", "england", "scotland", "wales", "northern+ireland", "london", "birmingham", "leeds", "glasgow", "sheffield", "bradford", "manchester", "edinburgh", "liverpool", "bristol", "cardiff", "belfast", "leicester", "wakefield", "coventry", "nottingham", "newcastle"},
 	"croatia":            PresetLocations{"croatia", "hrvatska", "zagreb", "split", "rijeka", "osijek", "zadar", "pula"},
 	"worldwide":          PresetLocations{},
 	"china":              PresetLocations{"china", "中国", "guangzhou", "shanghai", "beijing", "hangzhou", "hong+kong"},
