@@ -25,3 +25,15 @@ go run *.go \
 Contributions are accepted. Please provide any input as pull request. As a hobby project, my time is limited, but PRs and issues are addressed regularly.
 
 *Please use the provided precommit hooks and run `go fmt`, `go vet` and `go lint` liberally.*
+
+## FAQ
+
+### Why am I not on this list?
+
+This could be due to a number of things.
+
+1) Firstly, GitHub API doesn't allow sorting by contributions, so instead it is first sorted by number of followers to get a larger list, which is then sorted by contributions. This means you need a minimum number of followers to be on this list. Each page shows the minimum number of followers needed.
+
+2) You live in a city which is not included in the query. Unfortunately the query is free-text and not strictly geographical. Rural areas may be excluded from the list, but you can often remedy this by adding the country name to your location in GitHub.
+
+3) You have mostly private commits. These are included too, but they are not listed on the main country page anymore. Instead you will find a subpage with a list that also has private contributions included. This arrangement is done to favor open source contributions over private contributions.
