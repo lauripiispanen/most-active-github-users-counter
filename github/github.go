@@ -155,7 +155,18 @@ Pages:
 					log.Fatalln("Too many errors received. Quitting.")
 				}
 			}
-			dataNode := rootNode["data"].(map[string]interface{})
+			dataNode, ok := rootNode["data"].(map[string]interface{})
+			if !ok {
+				retryCount++
+				if retryCount < maxRetryCount {
+					log.Println("Error accessing data element")
+					time.Sleep(10 * time.Second)
+					continue Pages
+				} else {
+					log.Fatalln("Too many errors received. Quitting.")
+				}
+			}
+
 			searchNode := dataNode["search"].(map[string]interface{})
 			totalUsersCount = int(searchNode["userCount"].(float64))
 			edgeNodes := searchNode["edges"].([]interface{})
