@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"regexp"
 	"strings"
+	"time"
 
 	"github.com/lauripiispanen/most-active-github-users-counter/net"
 )
@@ -70,6 +71,9 @@ func (client HTTPGithubClient) SearchUsers(query UserSearchQuery) (GithubSearchR
 	perPage := 5
 	totalUsersCount := 0
 
+	retryCount := 0
+	maxRetryCount := 10
+
 Pages:
 	for totalCount < query.MaxUsers {
 		previousCursor := ""
@@ -119,16 +123,37 @@ Pages:
 
 			body, err := client.Request("https://api.github.com/graphql", graphQlString)
 			if err != nil {
-				log.Fatal(err)
+				retryCount++
+				if retryCount < maxRetryCount {
+					log.Println("error making graphql request... retrying")
+					time.Sleep(10 * time.Second)
+					continue Pages
+				} else {
+					log.Fatalln("Too many errors received. Quitting.")
+				}
 			}
 
 			var response interface{}
 			if err := json.Unmarshal(body, &response); err != nil {
-				log.Fatal(err)
+				retryCount++
+				if retryCount < maxRetryCount {
+					log.Println("error unmarshalling JSON response... retrying")
+					time.Sleep(10 * time.Second)
+					continue Pages
+				} else {
+					log.Fatalln("Too many errors received. Quitting.")
+				}
 			}
 			rootNode := response.(map[string]interface{})
 			if val, ok := rootNode["errors"]; ok {
-				log.Fatalf("%s", val)
+				retryCount++
+				if retryCount < maxRetryCount {
+					log.Printf("Received error response (retrying): %+v", val)
+					time.Sleep(10 * time.Second)
+					continue Pages
+				} else {
+					log.Fatalln("Too many errors received. Quitting.")
+				}
 			}
 			dataNode := rootNode["data"].(map[string]interface{})
 			searchNode := dataNode["search"].(map[string]interface{})
