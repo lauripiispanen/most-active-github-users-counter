@@ -63,20 +63,20 @@ func YamlOutput(results github.GithubSearchResults, writer io.Writer, options to
 				writer,
 				`
   - rank: %+v
-    name: '%+v'
-    login: '%+v'
-    avatarUrl: '%+v'
+    name: %+v
+    login: %+v
+    avatarUrl: %+v
     contributions: %+v
-    company: '%+v'
-    organizations: '%+v'
+    company: %+v
+    organizations: %+v
 `,
 				i+1,
-				strings.Replace(u.Name, "'", "''", -1),
-				strings.Replace(u.Login, "'", "''", -1),
+				strconv.QuoteToASCII(u.Name),
+				strconv.QuoteToASCII(u.Login),
 				u.AvatarURL,
 				contributionCount,
-				strings.Replace(u.Company, "'", "''", -1),
-				strings.Replace(strings.Join(u.Organizations, ","), "'", "''", -1))
+				strconv.QuoteToASCII(u.Company),
+				strconv.QuoteToASCII(strings.Join(u.Organizations, ",")))
 		}
 	}
 
@@ -94,11 +94,11 @@ func YamlOutput(results github.GithubSearchResults, writer io.Writer, options to
 				writer,
 				`
   - rank: %+v
-    name: '%+v'
+    name: %+v
     membercount: %+v
 `,
 				i+1,
-				strings.Replace(org.Name, "'", "''", -1),
+				strconv.QuoteToASCII(org.Name),
 				org.MemberCount)
 		}
 	}
