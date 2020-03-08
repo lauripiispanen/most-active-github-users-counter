@@ -6,7 +6,7 @@ var PRESETS = map[string]PresetLocations{
 	"austria":            PresetLocations{"austria", "österreich", "vienna", "wien", "linz", "salzburg", "graz", "innsbruck", "klagenfurt", "wels", "dornbirn"},
 	"finland":            PresetLocations{"finland", "suomi", "helsinki", "tampere", "oulu", "espoo", "vantaa", "turku", "rovaniemi", "jyväskylä", "lahti", "kuopio", "pori", "lappeenranta", "vaasa"},
 	"sweden":             PresetLocations{"sweden", "sverige", "stockholm", "malmö", "uppsala", "göteborg", "gothenburg"},
-	"norway":             PresetLocations{"norway", "norge", "oslo", "bergen"},
+	"norway":             PresetLocations{"norway", "norge", "oslo", "bergen", "trondheim"},
 	"germany":            PresetLocations{"germany", "deutschland", "berlin", "frankfurt", "munich", "münchen", "hamburg", "cologne", "köln"},
 	"netherlands":        PresetLocations{"netherlands", "nederland", "amsterdam", "rotterdam", "hague", "utrecht", "holland", "delft"},
 	"ukraine":            PresetLocations{"ukraine", "kiev", "kyiv", "kharkiv", "dnipro", "odesa", "donetsk", "zaporizhia"},
@@ -115,7 +115,18 @@ var PRESETS = map[string]PresetLocations{
 	"togo":               PresetLocations{"togo", "lome"},
 	"sierra leone":       PresetLocations{"sierra+leone", "freetown", "makeni", "koidu"},
 	"ireland":            PresetLocations{"ireland", "dublin", "cork", "limerick", "galway", "waterford+ireland", "drogheda", "dundalk"},
-	"hong kong":          PresetLocations{"hong+kong", "kowloon"}}
+	"hong kong":          PresetLocations{"hong+kong", "kowloon"},
+	"el salvador":        PresetLocations{"el+salvador"},
+	"kyrgyzstan":         PresetLocations{"kyrgyzstan", "bishkek", "osh", "jalal-abad", "karakol", "tokmok"},
+	"nicaragua":          PresetLocations{"nicaragua", "managua", "matagalpa", "chinandega"},
+	"turkmenistan":       PresetLocations{"turkmenistan", "turkmenabat"},
+	"paraguay":           PresetLocations{"paraguay", "asunción", "asuncion", "ciudad+del+este", "san+lorenzo", "luque", "capiata"},
+	"laos":               PresetLocations{"laos", "vientiane", "pakse"},
+	"bulgaria":           PresetLocations{"bulgaria", "sofia", "plovdiv", "varna", "burgas", "ruse", "stara+zagora", "pleven"},
+	"lebanon":            PresetLocations{"lebanon", "beirut", "sidon", "tyre"},
+	"libya":              PresetLocations{"libya", "tripoli", "benghazi", "misrata", "zliten", "bayda"},
+	"slovakia":           PresetLocations{"slovakia", "bratislava", "kosice", "presov", "zilina"},
+	"lithuania":          PresetLocations{"lithuania", "vilnius", "kaunas", "klaipeda", "siauliai", "panevezys", "alytus"}}
 
 func Preset(name string) []string {
 	return PRESETS[name]
