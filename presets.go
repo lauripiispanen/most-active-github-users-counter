@@ -4,7 +4,7 @@ type PresetLocations []string
 
 var PRESETS = map[string]PresetLocations{
 	"austria":            PresetLocations{"austria", "österreich", "vienna", "wien", "linz", "salzburg", "graz", "innsbruck", "klagenfurt", "wels", "dornbirn"},
-	"finland":            PresetLocations{"finland", "suomi", "helsinki", "tampere", "oulu", "espoo", "vantaa", "turku"},
+	"finland":            PresetLocations{"finland", "suomi", "helsinki", "tampere", "oulu", "espoo", "vantaa", "turku", "rovaniemi", "jyväskylä", "lahti", "kuopio", "pori", "lappeenranta", "vaasa"},
 	"sweden":             PresetLocations{"sweden", "sverige", "stockholm", "malmö", "uppsala", "göteborg", "gothenburg"},
 	"norway":             PresetLocations{"norway", "norge", "oslo", "bergen"},
 	"germany":            PresetLocations{"germany", "deutschland", "berlin", "frankfurt", "munich", "münchen", "hamburg", "cologne", "köln"},
@@ -15,7 +15,7 @@ var PRESETS = map[string]PresetLocations{
 	"estonia":            PresetLocations{"estonia", "eesti", "tallinn", "tartu", "narva", "pärnu"},
 	"denmark":            PresetLocations{"denmark", "danmark", "copenhagen", "aarhus", "odense", "aalborg"},
 	"portugal":           PresetLocations{"portugal", "lisbon", "lisboa", "braga", "porto", "aveiro", "coimbra", "funchal", "madeira"},
-	"france":             PresetLocations{"france", "paris", "marseille", "lyon", "toulouse", "nice", "nantes", "strasbourg", "montpellier", "bordeaux", "lille", "rennes", "reims"},
+	"france":             PresetLocations{"france", "paris", "marseille", "lyon", "toulouse", "nice", "nantes", "strasbourg", "montpellier", "bordeaux", "lille", "rennes", "reims", "rouen", "toulon", "le+havre", "grenoble", "dijon", "le+mans", "brest,france", "tours"},
 	"spain":              PresetLocations{"spain", "españa", "madrid", "barcelona", "valencia", "seville", "sevilla", "zaragoza", "malaga", "murcia", "palma", "bilbao", "alicante", "cordoba"},
 	"italy":              PresetLocations{"italy", "italia", "rome", "roma", "milan", "naples", "napoli", "turin", "torino", "palermo", "genoa", "genova", "bologna", "florence", "firenze", "bari", "catania", "venice", "verona"},
 	"uk":                 PresetLocations{"uk", "england", "scotland", "wales", "northern+ireland", "london", "birmingham", "leeds", "glasgow", "sheffield", "bradford", "manchester", "edinburgh", "liverpool", "bristol", "cardiff", "belfast", "leicester", "wakefield", "coventry", "nottingham", "newcastle"},
