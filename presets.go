@@ -44,7 +44,7 @@ var PRESETS = map[string]PresetLocations{
 	"tanzania":           PresetLocations{"tanzania", "dar+es+salaam", "mwanza", "arusha", "dodoma", "mbeya", "morogoro", "tanga", "kilimanjaro"},
 	"south korea":        PresetLocations{"south+korea", "ROK", "korea", "seoul", "busan", "incheon", "daegu", "daejeon", "gwangju", "대한민국", "서울", "서울시"},
 	"colombia":           PresetLocations{"colombia", "bogota", "medellin", "cali", "barranquilla", "cartagena", "cucuta", "bucaramanga", "ibague", "soledad", "pereira", "santa+marta"},
-	"kenya":              PresetLocations{"kenya", "nairobi", "mombasa", "kisumu", "nakuru", "eldoret", "kisii"},
+	"kenya":              PresetLocations{"kenya", "nairobi", "mombasa", "kisumu", "nakuru", "eldoret", "kisii", "nyeri"},
 	"argentina":          PresetLocations{"argentina", "buenos+aires", "cordoba", "rosario", "mendoza", "la+plata", "tucuman", "mar+del+plata", "salta", "resistencia"},
 	"algeria":            PresetLocations{"algeria", "algiers", "oran", "constantine", "annaba", "blida", "batna", "djelfa", "setif", "sidi+bel+abbes", "biskra", "tiaret", "relizane", "mostaganem", "tlemcen", "chlef", "jijel"},
 	"sudan":              PresetLocations{"sudan", "khartoum", "omdurman"},
