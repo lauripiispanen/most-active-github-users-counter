@@ -114,6 +114,7 @@ var PRESETS = map[string]PresetLocations{
 	"switzerland":        PresetLocations{"switzerland", "zurich", "zürich", "geneva", "basel", "lausanne", "bern", "winterthur", "lucerne", "gallen", "lugano", "biel", "thun"},
 	"togo":               PresetLocations{"togo", "lome"},
 	"sierra leone":       PresetLocations{"sierra+leone", "freetown", "makeni", "koidu"},
+	"macau":              PresetLocations{"macau", "macao", "Macau", "Macao"},
 	"hong kong":          PresetLocations{"hong+kong", "kowloon"}}
 
 func Preset(name string) []string {
