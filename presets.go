@@ -126,7 +126,8 @@ var PRESETS = map[string]PresetLocations{
 	"lebanon":            PresetLocations{"lebanon", "beirut", "sidon", "tyre"},
 	"libya":              PresetLocations{"libya", "tripoli", "benghazi", "misrata", "zliten", "bayda"},
 	"slovakia":           PresetLocations{"slovakia", "bratislava", "kosice", "presov", "zilina"},
-	"lithuania":          PresetLocations{"lithuania", "vilnius", "kaunas", "klaipeda", "siauliai", "panevezys", "alytus"}}
+	"lithuania":          PresetLocations{"lithuania", "vilnius", "kaunas", "klaipeda", "siauliai", "panevezys", "alytus"},
+	"qatar":              PresetLocations{"Qatar", "Doha"}}
 
 func Preset(name string) []string {
 	return PRESETS[name]
