@@ -22,6 +22,7 @@ func (i *arrayFlags) Set(value string) error {
 }
 
 var locations arrayFlags
+var excludeLocations arrayFlags
 
 func main() {
 	token := flag.String("token", "", "Github auth token")
@@ -29,13 +30,15 @@ func main() {
 	considerNum := flag.Int("consider", 1000, "Amount of users to consider")
 	outputOpt := flag.String("output", "plain", "Output format: plain, csv")
 	fileName := flag.String("file", "", "Output file (optional, defaults to stdout)")
-	preset := flag.String("preset", "", "Preset (optional)")
+	presetName := flag.String("preset", "", "Preset (optional)")
 
 	flag.Var(&locations, "location", "Location to query")
 	flag.Parse()
 
-	if *preset != "" {
-		locations = Preset(*preset)
+	if *presetName != "" {
+		preset := Preset(*presetName)
+		locations = preset.include
+		excludeLocations = preset.exclude
 	}
 
 	var format output.Format
@@ -50,7 +53,7 @@ func main() {
 		log.Fatal("Unrecognized output format: ", *outputOpt)
 	}
 
-	opts := top.Options{Token: *token, Locations: locations, Amount: *amount, ConsiderNum: *considerNum}
+	opts := top.Options{Token: *token, Locations: locations, ExcludeLocations: excludeLocations, Amount: *amount, ConsiderNum: *considerNum}
 	data, err := top.GithubTop(opts)
 
 	if err != nil {

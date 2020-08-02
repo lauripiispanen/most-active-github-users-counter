@@ -19,6 +19,10 @@ func GithubTop(options Options) (github.GithubSearchResults, error) {
 		query = fmt.Sprintf("%s location:%s", query, location)
 	}
 
+	for _, location := range options.ExcludeLocations {
+		query = fmt.Sprintf("%s -location:%s", query, location)
+	}
+
 	var client = github.NewGithubClient(net.TokenAuth(token))
 	users, err := client.SearchUsers(github.UserSearchQuery{Q: query, Sort: "followers", Order: "desc", MaxUsers: options.ConsiderNum})
 	if err != nil {
@@ -28,8 +32,9 @@ func GithubTop(options Options) (github.GithubSearchResults, error) {
 }
 
 type Options struct {
-	Token       string
-	Locations   []string
-	Amount      int
-	ConsiderNum int
+	Token            string
+	Locations        []string
+	ExcludeLocations []string
+	Amount           int
+	ConsiderNum      int
 }
