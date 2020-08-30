@@ -51,14 +51,25 @@ func CsvOutput(results github.GithubSearchResults, writer io.Writer, options top
 	return nil
 }
 
+type ContributionsSelector func(github.User) int
+
+func selectCommits(user github.User) int {
+	return user.CommitsCount
+}
+
+func selectContributions(user github.User) int {
+	return user.ContributionCount
+}
+
+func selectPublicContributions(user github.User) int {
+	return user.PublicContributionCount
+}
+
 func YamlOutput(results github.GithubSearchResults, writer io.Writer, options top.Options) error {
 	users := GithubUserList(results.Users)
-	outputUsers := func(user []github.User, public_only bool) {
+	outputUsers := func(user []github.User, cs ContributionsSelector) {
 		for i, u := range user {
-			contributionCount := u.ContributionCount
-			if public_only {
-				contributionCount = u.PublicContributionCount
-			}
+			contributionCount := cs(u)
 			fmt.Fprintf(
 				writer,
 				`
@@ -80,13 +91,17 @@ func YamlOutput(results github.GithubSearchResults, writer io.Writer, options to
 		}
 	}
 
-	topPublic := users.TopPublic(options.Amount)
+	topPublic := users.TopCommits(options.Amount)
 	fmt.Fprintln(writer, "users:")
-	outputUsers(topPublic, true)
+	outputUsers(topPublic, selectCommits)
+
+	topContributions := users.TopPublic(options.Amount)
+	fmt.Fprintln(writer, "users_public_contributions:")
+	outputUsers(topContributions, selectPublicContributions)
 
 	topPrivate := users.TopPrivate(options.Amount)
 	fmt.Fprintln(writer, "\nprivate_users:")
-	outputUsers(topPrivate, false)
+	outputUsers(topPrivate, selectContributions)
 
 	outputOrganizations := func(orgs Organizations) {
 		for i, org := range orgs {
@@ -105,6 +120,8 @@ func YamlOutput(results github.GithubSearchResults, writer io.Writer, options to
 
 	fmt.Fprintln(writer, "\norganizations:")
 	outputOrganizations(topPublic.TopOrgs(10))
+	fmt.Fprintln(writer, "\npublic_contributions_organizations:")
+	outputOrganizations(topContributions.TopOrgs(10))
 	fmt.Fprintln(writer, "\nprivate_organizations:")
 	outputOrganizations(topPrivate.TopOrgs(10))
 
@@ -135,6 +152,12 @@ func clone(users GithubUserList) GithubUserList {
 
 type GithubUserList []github.User
 
+func (users GithubUserList) TopCommits(amount int) GithubUserList {
+	u := TopCommitsUsers(clone(users))
+	sort.Sort(u)
+	return trim(GithubUserList(u), amount)
+}
+
 func (users GithubUserList) TopPublic(amount int) GithubUserList {
 	u := TopPublicUsers(clone(users))
 	sort.Sort(u)
@@ -158,6 +181,20 @@ func (slice GithubUserList) MinFollowers() int {
 		}
 	}
 	return followers
+}
+
+type TopCommitsUsers GithubUserList
+
+func (slice TopCommitsUsers) Len() int {
+	return len(slice)
+}
+
+func (slice TopCommitsUsers) Less(i, j int) bool {
+	return slice[i].CommitsCount > slice[j].CommitsCount
+}
+
+func (slice TopCommitsUsers) Swap(i, j int) {
+	slice[i], slice[j] = slice[j], slice[i]
 }
 
 type TopPublicUsers GithubUserList

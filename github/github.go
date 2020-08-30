@@ -108,7 +108,9 @@ Pages:
                 contributionsCollection {
                   contributionCalendar {
                     totalContributions
-                  }
+                  },
+                  totalCommitContributions,
+                  totalPullRequestContributions,
                   restrictedContributionsCount
                 }
               }
@@ -200,6 +202,8 @@ Pages:
 				contributionsCollection := userNode["contributionsCollection"].(map[string]interface{})
 				contributionCount := int(contributionsCollection["contributionCalendar"].(map[string]interface{})["totalContributions"].(float64))
 				privateContributionCount := int(contributionsCollection["restrictedContributionsCount"].(float64))
+				commitsCount := int(contributionsCollection["totalCommitContributions"].(float64))
+				pullRequestsCount := int(contributionsCollection["totalPullRequestContributions"].(float64))
 
 				user := User{
 					Login:                    login,
@@ -210,7 +214,9 @@ Pages:
 					FollowerCount:            followerCount,
 					ContributionCount:        contributionCount,
 					PublicContributionCount:  (contributionCount - privateContributionCount),
-					PrivateContributionCount: privateContributionCount}
+					PrivateContributionCount: privateContributionCount,
+					CommitsCount:             commitsCount,
+					PullRequestsCount:        pullRequestsCount}
 
 				if !userLogins[login] {
 					userLogins[login] = true
@@ -279,6 +285,8 @@ type User struct {
 	ContributionCount        int
 	PublicContributionCount  int
 	PrivateContributionCount int
+	CommitsCount             int
+	PullRequestsCount        int
 }
 
 type UserSearchQuery struct {
