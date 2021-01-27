@@ -198,7 +198,7 @@ var PRESETS = map[string]QueryPreset{
 		include: []string{"rwanda", "kigali", "butare", "muhanga", "ruhengeri", "gisenyi"},
 	},
 	"saudi arabia": QueryPreset{
-		include: []string{"Saudi", "KSA", "Riyadh", "Mecca"},
+		include: []string{"Saudi", "KSA", "Riyadh", "Mecca", "Jeddah", "Dammam"},
 	},
 	"morocco": QueryPreset{
 		include: []string{"morocco", "casablanca", "fez", "tangier", "marrakesh", "salé", "meknes", "rabat", "oujda", "kenitra", "agadir", "tetouan", "temara", "safi", "mohammedia", "khouribga", "el+jadida"},
