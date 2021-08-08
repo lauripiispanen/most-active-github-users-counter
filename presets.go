@@ -377,6 +377,9 @@ var PRESETS = map[string]QueryPreset{
 	"slovakia": QueryPreset{
 		include: []string{"slovakia", "bratislava", "kosice", "presov", "zilina"},
 	},
+	"slovenia": QueryPreset{
+		include: []string{"slovenia", "slovenija", ",+SI", "ljubljana", "maribor", "celje", "kranj", "koper", "velenje", "novo+mesto", "nova+gorica", "krsko", "krško", "murska+sobota", "postojna", "slovenj+gradec"},
+	},
 	"lithuania": QueryPreset{
 		include: []string{"lithuania", "vilnius", "kaunas", "klaipeda", "siauliai", "panevezys", "alytus"},
 	},
