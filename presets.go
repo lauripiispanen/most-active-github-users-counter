@@ -6,6 +6,9 @@ type QueryPreset struct {
 }
 
 var PRESETS = map[string]QueryPreset{
+	"cyprus": QueryPreset{
+		include: []string{"cyprus", "nicosia", "lefkosia", "limassol", "lemessos", "larnaka", "paphos"},
+	},
 	"austria": QueryPreset{
 		include: []string{"austria", "österreich", "vienna", "wien", "linz", "salzburg", "graz", "innsbruck", "klagenfurt", "wels", "dornbirn"},
 	},
