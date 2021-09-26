@@ -309,7 +309,7 @@ var PRESETS = map[string]QueryPreset{
 		include: []string{"dominican+republic", "republica+dominicana", "santo+domingo", "la+vega", "macoris"},
 	},
 	"czech republic": QueryPreset{
-		include: []string{"czech", "ceska", "prague", "budejovice", "plzen", "karlovy", "ostrava", "brno"},
+		include: []string{"czech", "czechia", "ceska", "prague", "budejovice", "plzen", "karlovy", "ostrava", "brno"},
 	},
 	"jordan": QueryPreset{
 		include: []string{"jordan", "amman", "zarqa", "irbid"},
