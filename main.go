@@ -25,7 +25,7 @@ var locations arrayFlags
 var excludeLocations arrayFlags
 
 func main() {
-	token := flag.String("token", "", "Github auth token")
+	token := flag.String("token", LookupEnvOrString("GITHUB_TOKEN", ""), "Github auth token")
 	amount := flag.Int("amount", 256, "Amount of users to show")
 	considerNum := flag.Int("consider", 1000, "Amount of users to consider")
 	outputOpt := flag.String("output", "plain", "Output format: plain, csv")
@@ -77,4 +77,11 @@ func main() {
 		log.Fatal(err)
 	}
 	writer.Flush()
+}
+
+func LookupEnvOrString(key string, defaultVal string) string {
+	if val, ok := os.LookupEnv(key); ok {
+		return val
+	}
+	return defaultVal
 }
