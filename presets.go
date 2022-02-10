@@ -270,7 +270,7 @@ var PRESETS = map[string]QueryPreset{
 		include: []string{"cambodia", "phnom", "battambang", "siem+reap", "kampong"},
 	},
 	"senegal": QueryPreset{
-		include: []string{"senegal", "dakar", "touba", "thies", "rufisque"},
+		include: []string{"senegal", "dakar", "touba", "thies", "rufisque", "kaolack", "ziguinchor", "tambacounda", "kaffrine", "diourbel"},
 	},
 	"chad": QueryPreset{
 		include: []string{"chad", "tchad", "n'djamena", "moundou"},
