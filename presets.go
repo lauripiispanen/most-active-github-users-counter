@@ -76,7 +76,7 @@ var PRESETS = map[string]QueryPreset{
 		include: []string{"pakistan", "karachi", "lahore", "faisalabad", "rawalpindi", "peshawar", "islamabad"},
 	},
 	"brazil": QueryPreset{
-		include: []string{"brazil", "brasil", "são+paulo", "brasília", "salvador", "fortaleza", "belo+horizonte", "manaus", "curitiba", "recife", "porto+alegre", "florianópolis"},
+		include: []string{"brazil", "brasil", "são+paulo", "brasília", "salvador", "fortaleza", "bel", "belo+horizonte", "manaus", "curitiba", "recife", "rio+de+janeiro", "maceió", "aracaju", "porto+alegre", "florianópolis"},
 	},
 	"nigeria": QueryPreset{
 		include: []string{"nigeria", "lagos", "kano", "ibadan", "benin+city", "port+harcourt", "jos", "ilorin"},
