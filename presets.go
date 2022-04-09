@@ -207,7 +207,7 @@ var PRESETS = map[string]QueryPreset{
 		include: []string{"uzbekistan", "tashkent", "namangan", "samarkand", "andijan", "nukus", "bukhara", "qarshi", "fergana"},
 	},
 	"malaysia": QueryPreset{
-		include: []string{"malaysia", "kuala+lumpur", "kajang", "klang", "subang", "penang", "ipoh", "selangor", "melaka", "johor", "johor+bahru"},
+		include: []string{"malaysia", "kuala+lumpur", "kajang", "klang", "subang", "penang", "ipoh", "selangor", "melaka", "johor", "sabah", "johor+bahru", "shah+alam", "iskandar+puteri"},
 	},
 	"afghanistan": QueryPreset{
 		include: []string{"afghanistan", "kabul", "kandahar", "herat", "mazar-e-sharif", "jalalabad", "ghazni", "nangarhar"},
