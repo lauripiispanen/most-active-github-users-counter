@@ -106,10 +106,10 @@ var PRESETS = map[string]QueryPreset{
 	"iran": QueryPreset{
 		include: []string{"iran", "tehran", "mashhad", "isfahan", "esfahan", "karaj", "shiraz", "tabriz", "qom", "ahvaz", "ahwaz", "kermanshah", "urmia", "rasht", "kerman"},
 	},
-	"congo": QueryPreset{
-		include: []string{"congo", "drc", "cod", "kinshasa", "lubumbashi", "bukavu", "kananga", "goma", "mbuji+mayi", "likasi", "kolwezi"},
+	"congo Kinshasa": QueryPreset{
+		include: []string{"congo+kinshasa","drc", "cod", "kinshasa", "lubumbashi", "bukavu", "kananga", "goma", "mbuji+mayi", "likasi", "kolwezi","kalemie","uvira","matadi","moba","Kamina","Kabalo","kungurume"},
 	},
-	"congo brazza": QueryPreset{
+	"congo brazzaville": QueryPreset{
 		include: []string{"congo+brazza", "congo+brazza", "cog", "brazzaville", "djambala", "pointe-noire", "sibiti", "owando", "madingou", "loango", "kinkala", "impfondo", "dolisie"},
 	},
 	"turkey": QueryPreset{
