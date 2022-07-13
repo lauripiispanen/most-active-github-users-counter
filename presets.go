@@ -106,11 +106,11 @@ var PRESETS = map[string]QueryPreset{
 	"iran": QueryPreset{
 		include: []string{"iran", "tehran", "mashhad", "isfahan", "esfahan", "karaj", "shiraz", "tabriz", "qom", "ahvaz", "ahwaz", "kermanshah", "urmia", "rasht", "kerman"},
 	},
-	"congo": QueryPreset{
-		include: []string{"congo", "drc", "cod", "kinshasa", "lubumbashi", "bukavu", "kananga", "goma", "mbuji+mayi", "likasi", "kolwezi"},
+	"congo kinshasa": QueryPreset{
+		include: []string{"congo+kinshasa","drc", "cod", "kinshasa", "lubumbashi", "bukavu", "kananga", "goma", "mbuji+mayi", "likasi", "kolwezi","kalemie","uvira","matadi","moba","kamina","kabalo","kungurume"},
 	},
-	"congo brazza": QueryPreset{
-		include: []string{"congo+brazza", "congo+brazza", "cog", "brazzaville", "djambala", "pointe-noire", "sibiti", "owando", "madingou", "loango", "kinkala", "impfondo", "dolisie"},
+	"congo brazzaville": QueryPreset{
+		include: []string{"congo+brazza", "cog", "brazzaville", "djambala", "pointe+noire", "sibiti", "owando", "madingou", "loango", "kinkala", "impfondo", "dolisie"},
 	},
 	"turkey": QueryPreset{
 		include: []string{"turkey", "turkiye", "istanbul", "ankara", "izmir", "bursa", "adana", "gaziantep", "konya", "antalya", "kayseri", "mersin", "eskisehir", "samsun", "denizli", "malatya"},
