@@ -34,7 +34,7 @@ var PRESETS = map[string]QueryPreset{
 		include: []string{"russia", "moscow", "saint+petersburg", "novosibirsk", "yekaterinburg", "nizhny+novgorod", "samara", "omsk", "kazan", "chelyabinsk", "rostov-on-don", "ufa", "volgograd"},
 	},
 	"estonia": QueryPreset{
-		include: []string{"estonia", "eesti", "tallinn", "tartu", "narva", "pärnu"},
+		include: []string{"estonia", "eesti", "tallinn", "tartu", "narva", "pärnu", "rakvere", "kohtla-järve", "viljandi", "maardu", "sillamäe"},
 	},
 	"denmark": QueryPreset{
 		include: []string{"denmark", "danmark", "copenhagen", "aarhus", "odense", "aalborg"},
